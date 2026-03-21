@@ -17,10 +17,33 @@ Where:
 - `world` is the evaluation environment, including noise, drift, readout limits, and protocol constraints
 - `Score` is a multi-objective utility over security, robustness, cost, and usability
 
-This is the smallest core that is both impressive and achievable:
+This is the smallest core that is both useful and achievable:
 
-- impressive because it can autonomously kill bad designs and rank survivors
+- useful because it can eliminate weak designs, rank surviving candidates, and suggest the next most informative experiment
 - achievable because `v1` can run fully in software against known public results
+
+## Mission
+
+`autopuf` has two missions, but only one primary mission.
+
+Primary mission:
+
+- build an autonomous evaluator and optimizer for PUF research
+
+Embedded mission:
+
+- build a formal language and proof environment for PUF security claims using Lean
+
+Decision:
+
+- optimize for `Mission 1` utility first
+- embed `Mission 2` as a formal spine from day 0
+
+This means:
+
+- Python is the execution substrate for evaluation, attacks, search, artifacts, and reporting
+- Lean is the truth anchor for abstract protocol semantics, security games, proof obligations, and proof status
+- promoted strong claims must carry formal status, even when they are not yet fully proved
 
 ## Goals
 
@@ -28,10 +51,12 @@ This is the smallest core that is both impressive and achievable:
 - Evaluate candidate designs against adversarial attacks and real-world perturbations.
 - Recover known failure modes from the literature as regression tests.
 - Produce a ranked frontier of surviving candidates and the next most informative experiment.
+- Add a formal spine that sharpens claims, tracks assumptions, and raises the quality bar for promoted results.
 
 ## Non-Goals
 
-- Full formal verification of quantum protocols in `v1`
+- A Lean-only implementation of the whole repository
+- Full formal verification of every protocol and result in `v1`
 - Wet-lab control or direct hardware orchestration in `v1`
 - General scientific autonomy across unrelated domains
 - Replacing researchers with unconstrained idea generation
@@ -46,9 +71,11 @@ Included:
 - optical or photonic readout variants
 - hybrid designs that mix classical PUF assumptions with quantum-inspired or quantum-network-compatible constraints
 - attack search over modeling, replay, nearest-match counterfeiting, CRP exhaustion, and drift/noise
+- a Lean formal core for candidate semantics, verifier/adversary roles, security games, and proof-status tracking
 
 Deferred:
 
+- full end-to-end proof of the entire optimizer stack
 - full UC-security proof search
 - advanced quantum protocol synthesis
 - laboratory device control
@@ -65,6 +92,12 @@ Any autonomous research system in this space needs all three of these:
 Without a falsifier, the system is just automated ideation.
 Without an evaluator, the system cannot tell whether a result is correct.
 Without a search loop, the system cannot optimize.
+
+For this repo, utility comes first:
+
+- the empirical engine decides what is promising
+- the formal engine decides what is precisely claimed
+- strong results are only promoted when both layers agree on what the claim means
 
 ## System Overview
 
@@ -86,6 +119,7 @@ Outputs:
 - attack traces
 - uncertainty report
 - next most informative experiment
+- proof status for promoted claims
 
 ## Target Repo Layout
 
@@ -98,17 +132,29 @@ Outputs:
 ├── TASK_TEMPLATE.md
 ├── RUNBOOK.md
 ├── pyproject.toml
+├── formal/
+│   ├── lakefile.lean
+│   ├── Main.lean
+│   └── Autopuf/
+│       ├── Model.lean
+│       ├── Games.lean
+│       ├── Claims.lean
+│       └── Bridge.lean
 ├── ops/
 │   ├── tasks/
 │   └── templates/
 │       ├── task.yaml
 │       ├── research-run.yaml
+│       ├── formal-claim.yaml
 │       └── promotion.yaml
 ├── src/
 │   └── pufopt/
 │       ├── cli.py
 │       ├── config.py
 │       ├── types.py
+│       ├── formal/
+│       │   ├── bridge.py
+│       │   └── proof_status.py
 │       ├── loop/
 │       │   ├── search.py
 │       │   ├── scheduler.py
@@ -246,6 +292,28 @@ class Evaluator(Protocol):
     ) -> "EvaluationResult": ...
 ```
 
+### Formal Claim
+
+A formal claim captures the abstract meaning of a promoted result.
+
+It is the formalized statement of:
+
+- what candidate family is being discussed
+- under which assumptions
+- in which security game
+- with what proof status
+
+Formal claim contract:
+
+```python
+class FormalClaim(Protocol):
+    id: str
+    candidate_family: str
+    security_game: str
+    assumptions: list[str]
+    proof_status: str
+```
+
 ## Canonical Metrics
 
 Every evaluation returns these metrics:
@@ -270,6 +338,21 @@ Every evaluation returns these metrics:
 - exact world parameters
 - attack budget used
 - artifacts required to reproduce the result
+- `formal_claim_id` when available
+- `proof_status` for promoted or high-salience results
+
+## Proof Status
+
+Promoted claims must carry one of these proof statuses:
+
+- `empirical_only`
+- `specified`
+- `partially_proved`
+- `proved`
+- `counterexample_found`
+
+`v1` does not require every result to be proved.
+`v1` does require strong results to be either formalized or explicitly marked as `empirical_only`.
 
 ## Constraints
 
@@ -506,6 +589,9 @@ artifacts/runs/<run_id>/
 ├── world.yaml
 ├── attacks/
 │   └── *.json
+├── formal/
+│   ├── claim.yaml
+│   └── proof_status.json
 ├── metrics.json
 ├── score.json
 ├── logs.txt
@@ -536,6 +622,7 @@ python -m pufopt.cli report --run artifacts/runs/<run_id>
 - define types and schemas
 - implement local artifact storage
 - implement CLI stubs
+- initialize the Lean workspace and formal claim schema
 
 ### Milestone 1
 
@@ -544,6 +631,7 @@ python -m pufopt.cli report --run artifacts/runs/<run_id>
 - implement honest evaluator
 - implement modeling and replay attacks
 - run deterministic smoke tests
+- define the abstract Lean model for candidates, verifiers, adversaries, and security games
 
 ### Milestone 2
 
@@ -551,6 +639,7 @@ python -m pufopt.cli report --run artifacts/runs/<run_id>
 - add nearest-match and CRP exhaustion attacks
 - add constrained scoring
 - add run reports
+- add proof-status plumbing and bounded differential checks for supported families
 
 ### Milestone 3
 
@@ -558,6 +647,7 @@ python -m pufopt.cli report --run artifacts/runs/<run_id>
 - tune search loop
 - generate first useful Pareto frontier
 - rank next experiments
+- attach formal status to strong promoted results
 
 ## Testing Strategy
 
@@ -597,6 +687,7 @@ The project is valuable when the system can:
 - produce non-obvious tradeoffs
 - recover known literature boundaries
 - recommend the next most informative experiment
+- say what is formally specified, partially proved, or still empirical-only
 
 ## Immediate Build Plan
 
@@ -608,9 +699,11 @@ Order of truth:
 2. attacks work
 3. constraints reject bad designs
 4. scoring ranks survivors
-5. frontier and search improve over baseline
+5. strong results carry proof status
+6. frontier and search improve over baseline
 
 If the evaluator is weak, the optimizer will confidently optimize the wrong thing.
+If the formal layer is absent, promoted claims will drift semantically over time.
 
 The concrete execution backlog lives in [TASKS.md](/Users/tomas/code/pufs/TASKS.md).
 

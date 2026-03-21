@@ -1,0 +1,48 @@
+id: T007
+title: Initialize Lean workspace
+status: ready
+phase: Phase 0
+objective: >
+  Initialize the Lean workspace so the formal spine exists from day 0 and can
+  host abstract protocol semantics, security games, and proof-status-linked claims.
+depends_on:
+  - T001
+inputs:
+  design_docs:
+    - README.md
+    - AGENTS.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - README.md
+    - TASKS.md
+  formal_paths: []
+allowed_write_paths:
+  - formal/
+  - README.md
+required_outputs:
+  - formal/lakefile.lean
+  - formal/Main.lean
+acceptance_criteria:
+  - the Lean workspace is initialized
+  - build instructions are captured in the repo
+  - the workspace layout supports Autopuf/Model.lean, Autopuf/Games.lean, and Autopuf/Claims.lean
+required_commands:
+  - lake build
+artifacts:
+  - verification.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - introducing a Lean structure that does not align with the empirical architecture
+  - making the formal spine too broad before the core abstractions stabilize
+escalation_triggers:
+  - Lean workspace conventions conflict with the target repo structure
+  - the formal boundary between Python and Lean is unclear enough to affect future task ownership
+formal_claim_id: null
+proof_status_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator

@@ -39,6 +39,17 @@ If these conflict, precedence is:
 - Every surprising result must be reproduced before promotion.
 - Every failure must be preserved as a first-class outcome.
 - Every autonomous action must stay inside the declared file ownership and objective boundaries.
+- Every promoted strong claim must carry formal status.
+
+## Proof Status Vocabulary
+
+Use this exact vocabulary for formal claim status:
+
+- `empirical_only`
+- `specified`
+- `partially_proved`
+- `proved`
+- `counterexample_found`
 
 ## Global Status Vocabulary
 
@@ -303,6 +314,8 @@ Each task must pass all of these before `promoted`:
    - no unresolved critical findings remain
 5. `Reproduction Gate`
    - result can be regenerated from clean inputs
+6. `Formal Contract Gate`
+   - tasks touching the formal spine must validate their claim schemas and bridge outputs
 
 ## Delivery Artifact Contract
 
@@ -526,6 +539,10 @@ Each research run must pass these gates:
    - strong or surprising results rerun successfully
 5. `Trace Gate`
    - attack traces and metrics are stored
+6. `Formal Claim Gate`
+   - strong or promoted results carry `proof_status` and a formal claim reference, or are explicitly marked `empirical_only`
+7. `Differential Gate`
+   - if a supported family has a Lean reference semantics, bounded differential checks must pass before promotion
 
 ## Research Workflow Pseudocode
 
@@ -547,6 +564,10 @@ def run_research_job(job):
         review = red_team.intensify(job, result)
         if review.breaks_result:
             job.status = "implemented"
+            return
+        formal = formalizer.sync(job, result)
+        if formal.supported and not formal.differential_checks_passed:
+            job.status = "untrusted"
             return
     job.status = "red_reviewed"
 
@@ -629,6 +650,7 @@ An autonomous executor is ready to build when it can do all of the following:
 3. execute builder, verifier, red review, and reproduction passes
 4. update task state machine artifacts
 5. launch research runs from suite files
-6. promote only results that pass gates
+6. launch formalization and bounded differential-check jobs for strong results
+7. promote only results that pass gates
 
 At that point, the repo is not just documented. It is operable.

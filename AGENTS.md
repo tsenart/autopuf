@@ -11,11 +11,23 @@ Execution state machines and gates live in [WORKFLOWS.md](/Users/tomas/code/pufs
 
 The system is adversarial by design.
 
-Every promising result must survive all three:
+The primary mission is utility:
+
+- eliminate weak designs
+- rank survivors
+- choose the next best experiment
+
+The formal layer exists to strengthen promoted claims, not to replace empirical evaluation.
+
+Every strong result must survive all three empirical checks:
 
 1. honest evaluation
 2. adversarial attack
 3. replayable reproduction
+
+Every promoted strong claim must also carry formal status:
+
+4. formal specification of the claim being promoted
 
 No agent is allowed to promote a result directly to "good." Agents can only:
 
@@ -45,6 +57,7 @@ The system runs this loop:
 - All claims must be linked to metrics or attack traces.
 - Any non-reproducible result is automatically downgraded to `untrusted`.
 - Attack success always overrides optimistic narrative summaries.
+- Strong results must carry `proof_status` and `formal_claim_id`, or be explicitly marked `empirical_only`.
 
 ## Shared Schemas
 
@@ -60,6 +73,8 @@ Required object types:
 - `ScoreCard`
 - `FrontierEntry`
 - `PlanDecision`
+- `FormalClaimSpec`
+- `ProofStatus`
 
 The implementation should keep these types in `src/pufopt/types.py` and validate external files at load time.
 
@@ -265,6 +280,37 @@ Planner objective:
 
 - maximize expected information gain per unit budget
 
+### 8. Formalizer
+
+Purpose:
+
+- translate promoted or high-salience results into formal claims and track proof status
+
+Inputs:
+
+- candidate family semantics
+- threat model
+- promoted result summary
+- claim templates
+
+Outputs:
+
+- `FormalClaimSpec`
+- proof-status artifact
+- Lean modules or references
+
+Responsibilities:
+
+- define abstract protocol semantics
+- define the security game being claimed
+- record assumptions explicitly
+- assign or update `proof_status`
+- support bounded differential checks between Python and Lean semantics
+
+Success metric:
+
+- precision of assumptions and stable mapping from empirical result to formal claim
+
 ## Artifact Contracts
 
 Each agent writes its output to a standard location inside the current run directory.
@@ -285,6 +331,9 @@ artifacts/runs/<run_id>/
 │   ├── nearest_match.json
 │   ├── crp_exhaustion.json
 │   └── drift_abuse.json
+├── formal/
+│   ├── claim.yaml
+│   └── proof_status.json
 ├── score/
 │   └── score.json
 ├── frontier/
@@ -327,6 +376,13 @@ The run is marked `untrusted` if any required attack family did not run.
 
 The run is marked `untrusted` if seeds or configs are missing.
 
+### Gate 5: Formal Claim Gate
+
+Strong or promoted results must either:
+
+- link to a formal claim and proof status
+- or be explicitly labeled `empirical_only`
+
 ## Decision Heuristics
 
 The planner should use these defaults:
@@ -364,6 +420,7 @@ world = world_builder.instantiate()
 honest = honest_evaluator.run(candidate, world)
 attacks = red_team.run_all(candidate, world)
 score = scorer.compute(candidate, world, honest, attacks)
+formal = formalizer.sync(candidate, score)
 frontier = frontier_keeper.update(score)
 decision = planner.decide(frontier, score)
 ```
@@ -381,6 +438,8 @@ Map initial implementation ownership like this:
 - `src/pufopt/loop/frontier.py`: Pareto maintenance
 - `src/pufopt/loop/search.py`: loop orchestrator
 - `src/pufopt/cli.py`: public interface
+- `src/pufopt/formal/bridge.py`: Python and Lean claim mapping
+- `formal/Autopuf/`: Lean models, games, and claims
 
 ## Agent Quality Bar
 
@@ -416,6 +475,7 @@ Agents control:
 - attack optimization
 - repeatable evaluation
 - prioritization of next actions
+- formalization of promoted claims within declared abstractions
 
 ## Definition Of Done For `v1`
 
@@ -427,5 +487,6 @@ Agents control:
 4. The frontier excludes constrained-out candidates.
 5. The planner emits a concrete next action.
 6. At least two known literature-aligned failure modes are reproduced.
+7. Strong promoted results carry proof status and link to a formal claim or are explicitly marked `empirical_only`.
 
 When these conditions hold, the project has crossed from "interesting framework" into "real autonomous evaluator."

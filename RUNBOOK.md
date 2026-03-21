@@ -44,6 +44,16 @@ Behavior:
 - mandatory reproduction
 - mandatory red review on all nontrivial outputs
 
+### `formal`
+
+Purpose:
+
+- build or update Lean formal claims, proof status, and Python-Lean bridge checks
+
+Primary artifact root:
+
+- `formal/`
+
 ## Startup Checklist
 
 Before any autonomous work begins:
@@ -52,7 +62,7 @@ Before any autonomous work begins:
 2. Validate task manifests or suite specs.
 3. Validate write ownership boundaries.
 4. Validate required directories.
-5. Freeze the current objective, constraints, and scoring config for the run.
+5. Freeze the current objective, constraints, scoring config, and proof policy for the run.
 
 If any of these fail, stop and mark the run `blocked`.
 
@@ -213,7 +223,20 @@ Then:
 - rerun under harder worlds
 - ablate key parameters
 
-### Step 6: Reproduce
+### Step 6: Formalize the promoted claim
+
+For any strong or promoted result:
+
+- assign or update `formal_claim_id`
+- assign `proof_status`
+- if the family is supported by Lean reference semantics, run bounded differential checks
+
+If formalization fails:
+
+- mark the result `empirical_only` only if that policy is explicitly allowed
+- otherwise mark `untrusted`
+
+### Step 7: Reproduce
 
 Rerun the result from stored artifacts and seeds.
 
@@ -221,13 +244,14 @@ If it does not reproduce:
 
 - mark `untrusted`
 
-### Step 7: Promote result
+### Step 8: Promote result
 
 Only promoted results may:
 
 - update the frontier
 - influence planner decisions
 - appear in summary reports as real findings
+- claim stronger-than-empirical assurance
 
 ## Escalation Matrix
 
@@ -238,6 +262,7 @@ Escalate to a human only for these cases:
 - write ownership conflict
 - major architecture conflict between tasks
 - suspiciously strong or publication-grade result
+- mismatch between Python behavior and Lean reference semantics
 - compute or lab budget breach
 - blocker that cannot be resolved from repo context
 
@@ -296,6 +321,7 @@ python -m pufopt.ops next-task
 python -m pufopt.ops pack-context --task T031
 python -m pufopt.ops verify-task --task T031
 python -m pufopt.ops promote-task --task T031
+python -m pufopt.ops formalize-claim --run artifacts/runs/<run_id>
 ```
 
 The `pufopt.ops` commands are not implemented yet, but this is the intended autonomous control plane.
@@ -309,6 +335,7 @@ The workflow is world-class only if it can do all of the following with low huma
 - verify itself with task-level acceptance checks
 - attack its own outputs before promotion
 - reproduce strong results before trusting them
+- attach proof status to promoted strong claims
 - preserve negative results
 - keep an auditable trail for every important decision
 

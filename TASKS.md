@@ -12,6 +12,7 @@ The goal is not to list everything that could be done. The goal is to define the
 - maintains a frontier
 - produces replayable artifacts
 - reproduces at least two literature-aligned failure modes
+- carries proof status for promoted strong claims
 
 ## Execution Rules
 
@@ -32,8 +33,9 @@ These are the non-skippable steps:
 6. Modeling and replay attacks
 7. Constraints and scoring
 8. End-to-end `evaluate`
-9. Frontier and optimize loop
-10. Validation against literature-aligned failure modes
+9. Formal claim and proof-status plumbing
+10. Frontier and optimize loop
+11. Validation against literature-aligned failure modes
 
 ## Parallel Work Packs
 
@@ -44,6 +46,7 @@ Once the foundations are in place, these can be done in parallel:
 - world models
 - report generation
 - regression fixtures
+- formal core and Python-Lean bridge work
 
 ## Phase 0: Foundations
 
@@ -178,6 +181,51 @@ Acceptance criteria:
 - unit tests run with one command
 - a minimal smoke test passes
 - deterministic seeding utilities are available to tests
+
+### `T007` Initialize Lean workspace
+
+Why:
+
+- the formal spine must exist from day 0 if we want promoted claims to map cleanly into Lean
+
+Depends on:
+
+- `T001`
+
+Outputs:
+
+- `formal/lakefile.lean`
+- `formal/Main.lean`
+
+Acceptance criteria:
+
+- the Lean workspace is initialized
+- build instructions are captured in the repo
+- the workspace layout supports `Autopuf/Model.lean`, `Autopuf/Games.lean`, and `Autopuf/Claims.lean`
+
+### `T008` Define formal claim schema and proof-status types
+
+Why:
+
+- promoted strong results need machine-readable formal status even before they are fully proved
+
+Depends on:
+
+- `T002`
+- `T003`
+- `T007`
+
+Outputs:
+
+- proof-status type definitions
+- formal claim schema definitions
+- `ops/templates/formal-claim.yaml`
+
+Acceptance criteria:
+
+- proof status values are defined and validated
+- formal claim manifests validate
+- evaluation artifacts can reference `formal_claim_id` and `proof_status`
 
 ## Phase 1: Inputs And Buildable Objects
 
@@ -397,6 +445,78 @@ Acceptance criteria:
 - `evaluate` loads candidate and world YAML
 - writes a full run artifact directory
 - emits a short summary pointing to artifacts
+
+## Phase 2.5: Formal Spine
+
+### `T024` Define Lean abstract core model
+
+Why:
+
+- the empirical engine needs a stable formal target for promoted claims
+
+Depends on:
+
+- `T007`
+- `T008`
+- `T002`
+
+Outputs:
+
+- `formal/Autopuf/Model.lean`
+- `formal/Autopuf/Games.lean`
+- `formal/Autopuf/Claims.lean`
+
+Acceptance criteria:
+
+- the model defines abstract candidate, challenge, response, verifier, adversary, and security-game concepts
+- assumptions and claim statements can be represented explicitly
+- the Lean modules are organized for incremental extension
+
+### `T025` Implement formal claim bridge and artifact plumbing
+
+Why:
+
+- promoted results need a stable bridge between empirical runs and formal claims
+
+Depends on:
+
+- `T004`
+- `T008`
+- `T023`
+- `T024`
+
+Outputs:
+
+- `src/pufopt/formal/bridge.py`
+- formal claim artifacts in run outputs
+
+Acceptance criteria:
+
+- a run can emit `formal_claim_id`
+- a run can emit `proof_status`
+- formal claim artifacts are written deterministically
+
+### `T026` Add bounded differential checks between Python and Lean reference semantics
+
+Why:
+
+- supported families need a concrete consistency check between implementation behavior and formal meaning
+
+Depends on:
+
+- `T024`
+- `T025`
+- `T012`
+
+Outputs:
+
+- differential test harness
+- at least one bounded reference check for a supported family
+
+Acceptance criteria:
+
+- at least one supported candidate family has a bounded differential check
+- mismatch is surfaced as a promotion-blocking finding for supported claims
 
 ## Phase 3: Adversarial Core
 
@@ -830,8 +950,13 @@ Do these in this exact order:
 18. `T040`
 19. `T041`
 20. `T044`
-21. `T050`
-22. `T051`
+21. `T007`
+22. `T008`
+23. `T024`
+24. `T025`
+25. `T026`
+26. `T050`
+27. `T051`
 
 This is the minimum path to a credible `v1`.
 
@@ -843,6 +968,7 @@ After `T006`, split work like this:
 - Track B: `T011`, `T014`, `T015`
 - Track C: `T020`, `T021`, `T022`
 - Track D: `T030`, `T031`, `T032`, then `T033`, `T034`, `T035`
+- Track E: `T007`, `T008`, `T024`, then `T025`, `T026`
 
 Merge point:
 
@@ -859,5 +985,6 @@ The backlog is complete when all of the following are true:
 - the frontier logic excludes rejected candidates
 - at least two literature-aligned failures are reproduced
 - a report names the next most informative experiment
+- strong promoted results carry proof status and formal-claim linkage or are explicitly marked `empirical_only`
 
 At that point, the repo has a real autonomous evaluator, not just design docs.

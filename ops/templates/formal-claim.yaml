@@ -1,0 +1,17 @@
+id: claim-example
+candidate_family: example_family
+security_game: example_game
+assumptions:
+  - replace with explicit assumption
+claim: >
+  Replace this with the precise claim being formalized.
+proof_status: specified
+lean_modules:
+  - formal/Autopuf/Model.lean
+  - formal/Autopuf/Games.lean
+  - formal/Autopuf/Claims.lean
+bridge_checks:
+  supported: false
+  differential_check_id: null
+related_runs: []
+notes: Replace with claim notes.

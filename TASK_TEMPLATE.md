@@ -43,9 +43,12 @@ inputs:
     - AGENTS.md
     - TASKS.md
     - WORKFLOWS.md
+    - RUNBOOK.md
   code_paths:
     - src/pufopt/attacks/base.py
     - src/pufopt/evaluators/honest.py
+  formal_paths:
+    - formal/Autopuf/Model.lean
 allowed_write_paths:
   - src/pufopt/attacks/modeling.py
   - tests/
@@ -69,6 +72,8 @@ risks:
 escalation_triggers:
   - attack interface in base.py is too weak for implementation
   - honest evaluator does not expose sufficient features
+formal_claim_id: null
+proof_status_required: false
 owner_role: Builder
 reviewer_role: Red Reviewer
 promoter_role: Integrator
@@ -83,6 +88,7 @@ promoter_role: Integrator
 - `depends_on`: upstream tasks that must be promoted first
 - `inputs.design_docs`: the minimal docs needed for context packing
 - `inputs.code_paths`: relevant local files for context
+- `inputs.formal_paths`: relevant Lean files for formal or bridge tasks
 - `allowed_write_paths`: strict ownership boundary
 - `required_outputs`: concrete file outputs
 - `acceptance_criteria`: copied exactly from the backlog plus task-specific clarifications
@@ -90,6 +96,8 @@ promoter_role: Integrator
 - `artifacts`: what must be written before promotion
 - `risks`: likely failure modes
 - `escalation_triggers`: conditions that require human review or task blocking
+- `formal_claim_id`: optional link to a formal claim for tasks that implement or modify the formal spine
+- `proof_status_required`: whether the task must emit or update proof-status artifacts before promotion
 
 ## `context.md` Contract
 
