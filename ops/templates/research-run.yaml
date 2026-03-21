@@ -1,0 +1,22 @@
+id: run-example
+status: ready
+mode: research
+candidate: candidates/example.yaml
+world: configs/worlds/example.yaml
+suite: suites/example.yaml
+attacks:
+  - modeling
+  - replay
+  - nearest_match
+  - crp_exhaustion
+  - drift_abuse
+budgets:
+  attack_queries: 1000
+  optimization_iterations: 50
+  wall_clock_minutes: 30
+scoring_config: configs/scoring/default.yaml
+constraints_frozen: true
+objective_frozen: true
+requires_reproduction: true
+requires_red_review: true
+artifacts_root: artifacts/runs/run-example
