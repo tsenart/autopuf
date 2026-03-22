@@ -1,0 +1,30 @@
+{
+  "task_id": "T006",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python tests/import_smoke.py",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "unit_tests_run_with_one_command",
+      "passed": true
+    },
+    {
+      "name": "minimal_smoke_test_passes",
+      "passed": true
+    },
+    {
+      "name": "deterministic_seeding_utilities_available",
+      "passed": true
+    }
+  ],
+  "notes": "Unittest discovery is the baseline local test command and deterministic test helpers are available in tests/utils.py."
+}
+

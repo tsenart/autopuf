@@ -1,0 +1,16 @@
+task_id: T001
+status: promoted
+promoted_by: Integrator
+gates:
+  schema_gate: pass
+  output_gate: pass
+  acceptance_gate: pass
+  red_review_gate: pass
+  reproduction_gate: pass
+  formal_contract_gate: n_a
+evidence:
+  verification: ops/tasks/T001/verification.json
+  formal_check: ops/tasks/T001/formal_check.json
+  red_review: ops/tasks/T001/red_review.md
+  reproduction: ops/tasks/T001/reproduction_report.md
+notes: Package skeleton and CLI scaffold are complete and verified in `.venv`.

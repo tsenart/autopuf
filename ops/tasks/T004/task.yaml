@@ -1,0 +1,58 @@
+id: T004
+title: Implement artifact storage contract
+status: promoted
+phase: Phase 0
+objective: >
+  Implement deterministic run layout, artifact serialization, replay helpers,
+  and atomic enough writes so run outputs can be recreated and trusted.
+depends_on:
+  - T002
+  - T003
+inputs:
+  design_docs:
+    - README.md
+    - AGENTS.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - src/pufopt/storage/io.py
+    - src/pufopt/storage/artifacts.py
+    - src/pufopt/types.py
+  formal_paths: []
+allowed_write_paths:
+  - src/pufopt/storage/
+  - tests/
+  - ops/tasks/T004/
+required_outputs:
+  - src/pufopt/storage/io.py
+  - src/pufopt/storage/artifacts.py
+  - tests/test_storage.py
+acceptance_criteria:
+  - a run directory can be created deterministically
+  - all major objects can be serialized and reloaded
+  - seeds and config references are always written
+  - artifact writes are atomic enough to avoid partial-success confusion
+required_commands:
+  - .venv/bin/python -m unittest tests.test_storage
+  - .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+  - .venv/bin/python tests/import_smoke.py
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - making the run layout diverge from the documented artifact model
+  - claiming atomicity without covering the common partial-write cases
+escalation_triggers:
+  - replay requirements force a different artifact model than the current docs describe
+  - storage contracts need broader interface changes outside the storage package
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator
+

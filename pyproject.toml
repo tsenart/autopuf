@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autopuf"
+version = "0.1.0"
+description = "Autonomous adversarial evaluator and optimizer for PUF research."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "tsenart" }
+]
+dependencies = [
+  "PyYAML>=6.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.autopuf.tests]
+default_command = ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'"
+default_seed = 1729

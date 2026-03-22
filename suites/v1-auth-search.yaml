@@ -1,0 +1,25 @@
+id: v1-auth-search
+mode: research
+artifacts_root: artifacts/runs
+search:
+  algorithm: evolutionary
+  max_iterations: 6
+  seeds:
+    - candidates/baseline-optical-auth-001.yaml
+    - candidates/baseline-classical-crp-001.yaml
+  mode: balanced
+worlds:
+  - configs/worlds/phone-reader-indoor-v1.yaml
+  - configs/worlds/lab-clean-v1.yaml
+attacks:
+  - modeling
+  - replay
+  - nearest_match
+  - crp_exhaustion
+  - drift_abuse
+scoring:
+  file: configs/scoring/default.yaml
+budgets:
+  queries: 1000
+  observations: 256
+  search_steps: 128

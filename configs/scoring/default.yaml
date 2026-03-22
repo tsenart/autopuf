@@ -1,0 +1,29 @@
+constraints:
+  max_far: 0.15
+  max_frr: 0.20
+  max_latency_ms: 25.0
+  min_crp_lifetime: 32
+  max_readout_cost: 1.0
+  min_confidence: 0.70
+
+weights:
+  security: 0.40
+  robustness: 0.25
+  efficiency: 0.20
+  operability: 0.15
+
+strong_result_policy:
+  survivor_required: true
+  frontier_update: true
+  score_threshold: 0.70
+  improvement_over_baseline: 0.05
+
+surprising_result_policy:
+  regression_contradiction: true
+  improvement_over_baseline: 0.10
+
+proof_policy:
+  formalize_for:
+    - strong_results
+    - promoted_results
+  empirical_only_allowed: true

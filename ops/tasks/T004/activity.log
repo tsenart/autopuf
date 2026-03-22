@@ -1,0 +1,5 @@
+2026-03-22T00:18: implemented atomic JSON and YAML writing helpers.
+2026-03-22T00:18: implemented deterministic run-layout creation and run-id computation.
+2026-03-22T00:19: added run-context recording for seeds and config references.
+2026-03-22T00:19: added storage tests for determinism, serialization, replay metadata, and temp-file cleanup.
+

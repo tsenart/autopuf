@@ -1,0 +1,5 @@
+2026-03-22T00:12: added YAML and JSON loading support to the schema layer.
+2026-03-22T00:12: implemented candidate, world, suite, and formal-claim validation with actionable errors.
+2026-03-22T00:13: normalized README-style optimization suites and runbook-style research runs into one typed spec.
+2026-03-22T00:13: added unit coverage for valid and invalid schema cases and reinstalled the package with the PyYAML dependency.
+

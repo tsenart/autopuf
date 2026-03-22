@@ -1,0 +1,9 @@
+id: phone-reader-indoor-v1
+family: phone_reader_indoor
+params:
+  sensor_noise_sigma: 0.03
+  temperature_shift_c: 6
+  illumination_jitter: 0.12
+  angle_variation_deg: 9
+  attacker_query_budget: 5000
+  verifier_model: honest

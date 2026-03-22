@@ -1,0 +1,17 @@
+task_id: T007
+status: promoted
+promoted_by: Integrator
+gates:
+  schema_gate: pass
+  output_gate: pass
+  acceptance_gate: pass
+  red_review_gate: pass
+  reproduction_gate: pass
+  formal_contract_gate: pass
+evidence:
+  verification: ops/tasks/T007/verification.json
+  formal_check: ops/tasks/T007/formal_check.json
+  red_review: ops/tasks/T007/red_review.md
+  reproduction: ops/tasks/T007/reproduction_report.md
+notes: Lean workspace is initialized, documented, and buildable.
+

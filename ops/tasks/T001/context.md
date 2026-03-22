@@ -7,7 +7,7 @@ Create the minimal Python package skeleton required to start implementation of t
 ## Relevant Design Decisions
 
 - The package name is `pufopt`.
-- The top-level entry point is `python -m pufopt.cli`.
+- The top-level entry point is `.venv/bin/python -m pufopt.cli`.
 - The repo layout should follow the target structure in [README.md](/Users/tomas/code/pufs/README.md).
 - This task must not implement system logic beyond the skeleton.
 
@@ -20,7 +20,7 @@ Create the minimal Python package skeleton required to start implementation of t
 
 ## Acceptance Criteria
 
-- `python -m pufopt.cli --help` resolves
+- `.venv/bin/python -m pufopt.cli --help` resolves
 - the package installs in editable mode
 - empty modules import without side effects
 

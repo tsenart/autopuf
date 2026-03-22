@@ -1,0 +1,38 @@
+{
+  "task_id": "T004",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m unittest tests.test_storage",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python tests/import_smoke.py",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "deterministic_run_directory_creation",
+      "passed": true
+    },
+    {
+      "name": "major_object_serialization_and_reload",
+      "passed": true
+    },
+    {
+      "name": "seeds_and_config_refs_persisted",
+      "passed": true
+    },
+    {
+      "name": "atomic_writes_leave_no_temp_files",
+      "passed": true
+    }
+  ],
+  "notes": "Storage helpers are verified against deterministic layout, replay metadata, and atomic-write behavior."
+}
+

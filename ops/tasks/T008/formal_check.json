@@ -1,0 +1,8 @@
+{
+  "task_id": "T008",
+  "required": false,
+  "passed": true,
+  "checks": [],
+  "notes": "This task validates the formal contract vocabulary but does not yet modify the Lean bridge or require a standalone formal gate."
+}
+

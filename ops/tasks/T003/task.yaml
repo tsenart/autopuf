@@ -1,0 +1,58 @@
+id: T003
+title: Define schema validation layer
+status: promoted
+phase: Phase 0
+objective: >
+  Implement schema loading and validation for candidate, world, suite, and
+  formal-claim files so external YAML and JSON artifacts fail closed with
+  actionable errors.
+depends_on:
+  - T002
+inputs:
+  design_docs:
+    - README.md
+    - AGENTS.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - src/pufopt/types.py
+    - src/pufopt/storage/schema.py
+    - pyproject.toml
+  formal_paths: []
+allowed_write_paths:
+  - pyproject.toml
+  - src/pufopt/storage/schema.py
+  - tests/
+  - ops/tasks/T003/
+required_outputs:
+  - pyproject.toml
+  - src/pufopt/storage/schema.py
+  - tests/test_schema.py
+acceptance_criteria:
+  - invalid candidate specs are rejected with actionable errors
+  - invalid world specs are rejected with actionable errors
+  - invalid suite specs are rejected with actionable errors
+  - invalid formal claim manifests are rejected with actionable errors
+  - schema validation is covered by unit tests
+required_commands:
+  - .venv/bin/python -m pip install -e .
+  - .venv/bin/python -m unittest tests.test_schema
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - making the suite schema too narrow for both optimization and runbook-driven jobs
+  - adding dependencies without keeping the bootstrap path simple
+escalation_triggers:
+  - YAML support requires a toolchain choice that conflicts with the repo bootstrap contract
+  - suite schema ambiguity blocks a stable validation contract
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator

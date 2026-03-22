@@ -46,8 +46,9 @@ The system runs this loop:
 3. `Honest Evaluator` measures baseline performance
 4. `Red Team` attacks candidate
 5. `Scorer` applies constraints and utility
-6. `Frontier Keeper` updates best-known survivors
-7. `Planner` selects next candidate or experiment
+6. `Formalizer` maps strong or promoted claims
+7. `Frontier Keeper` updates best-known survivors
+8. `Planner` selects next candidate or experiment
 
 ## Global Rules
 
@@ -225,62 +226,7 @@ Hard rule:
 
 - a candidate rejected by constraints cannot appear on the frontier
 
-### 6. Frontier Keeper
-
-Purpose:
-
-- maintain the current set of non-dominated survivors
-
-Inputs:
-
-- `ScoreCard`
-- prior frontier
-
-Outputs:
-
-- updated frontier
-- dominated candidate list
-
-Responsibilities:
-
-- de-duplicate equivalent candidates
-- track best-known version per family
-- preserve historical frontier snapshots
-
-Success metric:
-
-- stable and reproducible frontier updates
-
-### 7. Planner
-
-Purpose:
-
-- choose the next highest-value action
-
-Inputs:
-
-- frontier
-- failures
-- uncertainty map
-- budget remaining
-
-Outputs:
-
-- `PlanDecision`
-
-Allowed decisions:
-
-- explore candidate region
-- exploit promising region
-- intensify attack on strong survivor
-- resample under harder worlds
-- schedule discriminating experiment
-
-Planner objective:
-
-- maximize expected information gain per unit budget
-
-### 8. Formalizer
+### 6. Formalizer
 
 Purpose:
 
@@ -311,6 +257,61 @@ Success metric:
 
 - precision of assumptions and stable mapping from empirical result to formal claim
 
+### 7. Frontier Keeper
+
+Purpose:
+
+- maintain the current set of non-dominated survivors
+
+Inputs:
+
+- `ScoreCard`
+- prior frontier
+
+Outputs:
+
+- updated frontier
+- dominated candidate list
+
+Responsibilities:
+
+- de-duplicate equivalent candidates
+- track best-known version per family
+- preserve historical frontier snapshots
+
+Success metric:
+
+- stable and reproducible frontier updates
+
+### 8. Planner
+
+Purpose:
+
+- choose the next highest-value action
+
+Inputs:
+
+- frontier
+- failures
+- uncertainty map
+- budget remaining
+
+Outputs:
+
+- `PlanDecision`
+
+Allowed decisions:
+
+- explore candidate region
+- exploit promising region
+- intensify attack on strong survivor
+- resample under harder worlds
+- schedule discriminating experiment
+
+Planner objective:
+
+- maximize expected information gain per unit budget
+
 ## Artifact Contracts
 
 Each agent writes its output to a standard location inside the current run directory.
@@ -319,6 +320,7 @@ Example:
 
 ```text
 artifacts/runs/<run_id>/
+├── suite.yaml
 ├── candidate/
 │   └── candidate.yaml
 ├── world/
@@ -333,7 +335,8 @@ artifacts/runs/<run_id>/
 │   └── drift_abuse.json
 ├── formal/
 │   ├── claim.yaml
-│   └── proof_status.json
+│   ├── proof_status.json
+│   └── differential_check.json
 ├── score/
 │   └── score.json
 ├── frontier/
@@ -344,7 +347,10 @@ artifacts/runs/<run_id>/
 
 These files are the handoff layer between agents.
 
-## Status Vocabulary
+## Result Disposition Vocabulary
+
+This vocabulary is for evaluation outcomes and frontier disposition.
+It is distinct from the workflow state vocabulary in [WORKFLOWS.md](/Users/tomas/code/pufs/WORKFLOWS.md).
 
 Use this exact status vocabulary:
 
@@ -383,6 +389,12 @@ Strong or promoted results must either:
 - link to a formal claim and proof status
 - or be explicitly labeled `empirical_only`
 
+### Gate 6: Differential Gate
+
+If a supported candidate family has Lean reference semantics:
+
+- bounded differential checks must pass before the result is promoted
+
 ## Decision Heuristics
 
 The planner should use these defaults:
@@ -420,7 +432,7 @@ world = world_builder.instantiate()
 honest = honest_evaluator.run(candidate, world)
 attacks = red_team.run_all(candidate, world)
 score = scorer.compute(candidate, world, honest, attacks)
-formal = formalizer.sync(candidate, score)
+formal = formalizer.sync_if_needed(candidate, score)
 frontier = frontier_keeper.update(score)
 decision = planner.decide(frontier, score)
 ```

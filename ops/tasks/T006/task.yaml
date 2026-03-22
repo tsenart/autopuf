@@ -1,0 +1,53 @@
+id: T006
+title: Add test harness and CI-local conventions
+status: promoted
+phase: Phase 0
+objective: >
+  Establish the baseline local test harness, smoke coverage, and deterministic
+  test utilities so later implementation tasks have a stable verification path.
+depends_on:
+  - T000
+  - T001
+inputs:
+  design_docs:
+    - README.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - pyproject.toml
+    - tests/
+  formal_paths: []
+allowed_write_paths:
+  - pyproject.toml
+  - tests/
+  - ops/tasks/T006/
+required_outputs:
+  - pyproject.toml
+  - tests/
+acceptance_criteria:
+  - unit tests run with one command
+  - a minimal smoke test passes
+  - deterministic seeding utilities are available to tests
+required_commands:
+  - .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+  - .venv/bin/python tests/import_smoke.py
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - test execution conventions drifting across tasks
+  - deterministic test helpers existing but not being used
+escalation_triggers:
+  - the project needs a different test runner contract than the current unittest baseline
+  - test harness configuration belongs somewhere other than pyproject.toml
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator
+

@@ -1,0 +1,28 @@
+{"synthetic": false,
+ "schemaVersion": "2025-09-10",
+ "outputs":
+ {"o": ["244feba4649c06ad.olean"],
+  "i": "10e5d349e5ea7897.ilean",
+  "c": "7f9597c886f76adc.c"},
+ "log":
+ [{"message":
+   ".> LEAN_PATH=/Users/tomas/code/pufs/formal/.lake/build/lib/lean /Users/tomas/.elan/toolchains/leanprover--lean4---v4.28.0/bin/lean /Users/tomas/code/pufs/formal/Autopuf/Claims.lean -o /Users/tomas/code/pufs/formal/.lake/build/lib/lean/Autopuf/Claims.olean -i /Users/tomas/code/pufs/formal/.lake/build/lib/lean/Autopuf/Claims.ilean -c /Users/tomas/code/pufs/formal/.lake/build/ir/Autopuf/Claims.c --setup /Users/tomas/code/pufs/formal/.lake/build/ir/Autopuf/Claims.setup.json --json",
+   "level": "trace"}],
+ "inputs":
+ [["Autopuf.Claims:deps",
+   [["deps",
+     [["autopuf/Autopuf:extraDep", [["@autopuf:extraDep", "00000000000006bb"]]],
+      ["imports",
+       [["Autopuf.Games transitive imports (legacy)", "d9370c6290ceaf72"],
+        ["Autopuf.Games:importAllArts", "dbb89c6de43d8994"]]]]],
+    ["libs",
+     [["import dynlibs", "00000000000006bb"],
+      ["package external libraries", "00000000000006bb"],
+      ["module dynlibs", "00000000000006bb"],
+      ["module plugins", "00000000000006bb"]]]]],
+  ["Lean 4.28.0, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b",
+   "a96bc04a2e5e9630"],
+  ["/Users/tomas/code/pufs/formal/Autopuf/Claims.lean", "87d1544065a47d6c"],
+  ["options", "00000000000006bb"],
+  ["Module.leanArgs: #[]", "00000000000006bb"]],
+ "depHash": "9dd8ad2a9bbe24ce"}

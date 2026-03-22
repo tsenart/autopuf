@@ -1,0 +1,8 @@
+{
+  "task_id": "T003",
+  "required": false,
+  "passed": true,
+  "checks": [],
+  "notes": "Schema validation covers formal claims but does not yet modify Lean files or the formal bridge."
+}
+

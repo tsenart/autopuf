@@ -1,0 +1,30 @@
+{
+  "task_id": "T002",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m unittest tests.test_types",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python tests/import_smoke.py",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "required_types_exist",
+      "passed": true
+    },
+    {
+      "name": "protocols_defined",
+      "passed": true
+    },
+    {
+      "name": "public_interfaces_are_typed",
+      "passed": true
+    }
+  ],
+  "notes": "The shared dataclasses and runtime-checkable protocols are importable and covered by unit tests."
+}
+

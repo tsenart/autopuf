@@ -1,0 +1,54 @@
+id: T002
+title: Define shared types and protocols
+status: promoted
+phase: Phase 0
+objective: >
+  Define the shared typed contracts for candidates, worlds, attacks, evaluation
+  results, scorecards, planner decisions, and formal claims so the rest of the
+  system can build on a stable interface layer.
+depends_on:
+  - T000
+  - T001
+inputs:
+  design_docs:
+    - README.md
+    - AGENTS.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - src/pufopt/types.py
+    - tests/import_smoke.py
+  formal_paths: []
+allowed_write_paths:
+  - src/pufopt/types.py
+  - tests/
+  - ops/tasks/T002/
+required_outputs:
+  - src/pufopt/types.py
+  - tests/test_types.py
+acceptance_criteria:
+  - types exist for CandidateSpec, WorldSpec, AttackSpec, EvaluationResult, AttackResult, ScoreCard, FrontierEntry, PlanDecision, FormalClaimSpec, and ProofStatus
+  - attack, evaluator, candidate, and world protocols are defined
+  - mypy-friendly type hints exist for public interfaces
+required_commands:
+  - .venv/bin/python -m unittest tests.test_types
+  - .venv/bin/python tests/import_smoke.py
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - overfitting the type layer to current placeholder implementations
+  - defining contracts that are too weak for later loader and evaluator tasks
+escalation_triggers:
+  - protocol boundaries are unclear enough to block the evaluator or loader path
+  - the type system needs design changes that conflict with the documented abstractions
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator

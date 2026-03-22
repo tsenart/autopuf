@@ -1,0 +1,5 @@
+2026-03-22T00:25: created the Lean toolchain file, lakefile, and main entry point.
+2026-03-22T00:25: added `Autopuf` library modules for model, games, claims, and bridge bindings.
+2026-03-22T00:25: added `formal/README.md` with local build instructions.
+2026-03-22T00:26: verified the workspace with `cd formal && lake build`.
+

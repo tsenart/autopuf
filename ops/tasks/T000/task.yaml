@@ -1,0 +1,55 @@
+id: T000
+title: Bootstrap and validate local toolchains
+status: promoted
+phase: Phase 0
+objective: >
+  Validate that the required Python and Lean toolchains are present and document
+  the bootstrap commands needed for autonomous execution.
+depends_on: []
+inputs:
+  design_docs:
+    - README.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - RUNBOOK.md
+    - TASK_TEMPLATE.md
+  code_paths:
+    - TASKS.md
+    - RUNBOOK.md
+  formal_paths: []
+allowed_write_paths:
+  - TASKS.md
+  - RUNBOOK.md
+required_outputs:
+  - TASKS.md
+  - RUNBOOK.md
+acceptance_criteria:
+  - required tools are explicitly listed
+  - validation commands are explicitly listed
+  - the build sequence starts from this bootstrap step
+required_commands:
+  - python3 --version
+  - pip3 --version
+  - git --version
+  - lean --version
+  - lake --version
+  - python3 -m venv .venv
+  - .venv/bin/python --version
+  - .venv/bin/pip --version
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - assuming Lean is available without documenting how the repo depends on it
+  - creating hidden toolchain assumptions that block later tasks
+escalation_triggers:
+  - required tools are ambiguous
+  - environment validation requires changing the repo mission or build order
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator

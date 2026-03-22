@@ -1,0 +1,4 @@
+2026-03-22T00:00: added the initial CLI smoke test.
+2026-03-22T00:19: added storage and schema tests under unittest discovery.
+2026-03-22T00:22: added deterministic test utilities and recorded the default test command in `pyproject.toml`.
+

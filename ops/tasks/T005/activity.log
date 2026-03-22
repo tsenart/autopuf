@@ -1,0 +1,3 @@
+2026-03-22T00:00: created the initial CLI parser and placeholder handlers.
+2026-03-22T00:22: added parser-level tests for subcommand parsing.
+

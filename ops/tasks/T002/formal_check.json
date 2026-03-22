@@ -1,0 +1,8 @@
+{
+  "task_id": "T002",
+  "required": false,
+  "passed": true,
+  "checks": [],
+  "notes": "Shared types include proof-status support but this task does not modify the Lean formal spine."
+}
+

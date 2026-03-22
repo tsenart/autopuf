@@ -1,0 +1,5 @@
+2026-03-22T00:11: added proof-status and formal-claim support in the shared Python types.
+2026-03-22T00:12: added formal-claim validation and proof-status checks in the schema layer.
+2026-03-21T23:41: updated promotion artifacts to include formal-gate outcomes.
+2026-03-22T00:25: added the Lean proof-status vocabulary in `formal/Autopuf/Claims.lean`.
+

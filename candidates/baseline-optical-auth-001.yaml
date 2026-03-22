@@ -1,0 +1,10 @@
+id: baseline-optical-auth-001
+family: optical_auth
+params:
+  feature_extractor: spectral_histogram_v1
+  threshold_policy: global_margin
+  enrollment_samples: 64
+  feature_dimension: 96
+  challenge_sampler: random_uniform
+  session_policy: one_time_use
+  sensor_mode: standard_camera

@@ -1,0 +1,30 @@
+{
+  "task_id": "T007",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": "cd formal && lake build",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "lean_workspace_initialized",
+      "passed": true
+    },
+    {
+      "name": "build_instructions_captured_in_repo",
+      "passed": true
+    },
+    {
+      "name": "workspace_layout_supports_model_games_claims_bridge",
+      "passed": true
+    },
+    {
+      "name": "workspace_builds_from_formal_directory",
+      "passed": true
+    }
+  ],
+  "notes": "The formal workspace builds successfully with Lean 4.28.0."
+}
+

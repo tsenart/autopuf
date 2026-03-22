@@ -15,6 +15,19 @@ budgets:
   optimization_iterations: 50
   wall_clock_minutes: 30
 scoring_config: configs/scoring/default.yaml
+strong_result_policy:
+  survivor_required: true
+  frontier_update: true
+  score_threshold: null
+  improvement_over_baseline: null
+surprising_result_policy:
+  regression_contradiction: true
+  improvement_over_baseline: 0.10
+proof_policy:
+  formalize_for:
+    - strong_results
+    - promoted_results
+  empirical_only_allowed: true
 constraints_frozen: true
 objective_frozen: true
 requires_reproduction: true

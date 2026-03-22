@@ -1,0 +1,8 @@
+{
+  "task_id": "T000",
+  "required": false,
+  "passed": true,
+  "checks": [],
+  "notes": "Bootstrap task does not touch the formal spine."
+}
+

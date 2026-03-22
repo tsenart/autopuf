@@ -21,21 +21,41 @@ The goal is not to list everything that could be done. The goal is to define the
 - Tasks on the critical path should be completed before parallel nice-to-haves.
 - No search or optimization work begins until the evaluator and artifact pipeline are trustworthy.
 
+## Status Snapshot
+
+Done:
+
+- `T000` through `T008`
+- `T010` through `T015`
+- `T020` through `T024`
+- `T030` through `T045`
+
+Pending:
+
+- `T025` through `T026`
+- `T050` through `T052`
+- `T060` through `T062`
+
+Important note:
+
+- `T044` and `T045` are implemented and running now even though `T025` and `T026` are still open. The remaining formal work tightens promotion semantics rather than blocking basic evaluation and optimization.
+
 ## Critical Path
 
 These are the non-skippable steps:
 
-1. Repository and package skeleton
-2. Shared schemas and type system
-3. Artifact storage and replay
-4. Candidate and world loading
-5. Honest evaluator
-6. Modeling and replay attacks
-7. Constraints and scoring
-8. End-to-end `evaluate`
-9. Formal claim and proof-status plumbing
-10. Frontier and optimize loop
-11. Validation against literature-aligned failure modes
+1. Toolchain bootstrap and validation
+2. Repository and package skeleton
+3. Shared schemas and type system
+4. Artifact storage and replay
+5. Candidate and world loading
+6. Honest evaluator
+7. Modeling and replay attacks
+8. Constraints and scoring
+9. End-to-end `evaluate`
+10. Formal claim and proof-status plumbing
+11. Frontier and optimize loop
+12. Validation against literature-aligned failure modes
 
 ## Parallel Work Packs
 
@@ -50,7 +70,27 @@ Once the foundations are in place, these can be done in parallel:
 
 ## Phase 0: Foundations
 
-### `T001` Create Python package skeleton
+### `T000` Bootstrap and validate local toolchains [done]
+
+Why:
+
+- autonomous execution needs validated Python and Lean toolchains before any task can run reliably
+
+Depends on:
+
+- nothing
+
+Outputs:
+
+- documented prerequisites and validation commands in `RUNBOOK.md`
+
+Acceptance criteria:
+
+- required tools are explicitly listed
+- validation commands are explicitly listed
+- the build sequence starts from this bootstrap step
+
+### `T001` Create Python package skeleton [done]
 
 Why:
 
@@ -58,7 +98,7 @@ Why:
 
 Depends on:
 
-- nothing
+- `T000`
 
 Outputs:
 
@@ -68,11 +108,11 @@ Outputs:
 
 Acceptance criteria:
 
-- `python -m pufopt.cli --help` resolves
+- `.venv/bin/python -m pufopt.cli --help` resolves
 - the package installs in editable mode
 - empty modules import without side effects
 
-### `T002` Define shared types and protocols
+### `T002` Define shared types and protocols [done]
 
 Why:
 
@@ -80,6 +120,7 @@ Why:
 
 Depends on:
 
+- `T000`
 - `T001`
 
 Outputs:
@@ -88,11 +129,11 @@ Outputs:
 
 Acceptance criteria:
 
-- types exist for `CandidateSpec`, `WorldSpec`, `AttackSpec`, `EvaluationResult`, `AttackResult`, `ScoreCard`, `FrontierEntry`, and `PlanDecision`
+- types exist for `CandidateSpec`, `WorldSpec`, `AttackSpec`, `EvaluationResult`, `AttackResult`, `ScoreCard`, `FrontierEntry`, `PlanDecision`, `FormalClaimSpec`, and `ProofStatus`
 - attack, evaluator, candidate, and world protocols are defined
 - mypy-friendly type hints exist for public interfaces
 
-### `T003` Define schema validation layer
+### `T003` Define schema validation layer [done]
 
 Why:
 
@@ -112,9 +153,10 @@ Acceptance criteria:
 - invalid candidate specs are rejected with actionable errors
 - invalid world specs are rejected with actionable errors
 - invalid suite specs are rejected with actionable errors
+- invalid formal claim manifests are rejected with actionable errors
 - schema validation is covered by unit tests
 
-### `T004` Implement artifact storage contract
+### `T004` Implement artifact storage contract [done]
 
 Why:
 
@@ -137,7 +179,7 @@ Acceptance criteria:
 - seeds and config references are always written
 - artifact writes are atomic enough to avoid partial-success confusion
 
-### `T005` Create CLI skeleton
+### `T005` Create CLI skeleton [done]
 
 Why:
 
@@ -145,6 +187,7 @@ Why:
 
 Depends on:
 
+- `T000`
 - `T001`
 
 Outputs:
@@ -161,7 +204,7 @@ Acceptance criteria:
   - `report`
 - command parsing is covered by tests
 
-### `T006` Add test harness and CI-local conventions
+### `T006` Add test harness and CI-local conventions [done]
 
 Why:
 
@@ -169,6 +212,7 @@ Why:
 
 Depends on:
 
+- `T000`
 - `T001`
 
 Outputs:
@@ -182,7 +226,7 @@ Acceptance criteria:
 - a minimal smoke test passes
 - deterministic seeding utilities are available to tests
 
-### `T007` Initialize Lean workspace
+### `T007` Initialize Lean workspace [done]
 
 Why:
 
@@ -190,20 +234,27 @@ Why:
 
 Depends on:
 
+- `T000`
 - `T001`
 
 Outputs:
 
+- `formal/lean-toolchain`
 - `formal/lakefile.lean`
 - `formal/Main.lean`
+- `formal/Autopuf/Model.lean`
+- `formal/Autopuf/Games.lean`
+- `formal/Autopuf/Claims.lean`
+- `formal/Autopuf/Bridge.lean`
 
 Acceptance criteria:
 
 - the Lean workspace is initialized
 - build instructions are captured in the repo
-- the workspace layout supports `Autopuf/Model.lean`, `Autopuf/Games.lean`, and `Autopuf/Claims.lean`
+- the workspace layout supports `Autopuf/Model.lean`, `Autopuf/Games.lean`, `Autopuf/Claims.lean`, and `Autopuf/Bridge.lean`
+- the workspace builds from `formal/` with `lake build`
 
-### `T008` Define formal claim schema and proof-status types
+### `T008` Define formal claim schema and proof-status types [done]
 
 Why:
 
@@ -226,10 +277,11 @@ Acceptance criteria:
 - proof status values are defined and validated
 - formal claim manifests validate
 - evaluation artifacts can reference `formal_claim_id` and `proof_status`
+- promotion artifacts can record formal-gate outcomes
 
 ## Phase 1: Inputs And Buildable Objects
 
-### `T010` Implement candidate registry and loader
+### `T010` Implement candidate registry and loader [done]
 
 Why:
 
@@ -252,7 +304,7 @@ Acceptance criteria:
 - `build()` returns a `BuiltCandidate`
 - unknown family names fail clearly
 
-### `T011` Implement world registry and loader
+### `T011` Implement world registry and loader [done]
 
 Why:
 
@@ -274,7 +326,7 @@ Acceptance criteria:
 - sampling with the same seed gives the same world instance
 - unknown world families fail clearly
 
-### `T012` Implement baseline candidate family `classical_crp`
+### `T012` Implement baseline candidate family `classical_crp` [done]
 
 Why:
 
@@ -294,7 +346,7 @@ Acceptance criteria:
 - candidate builds successfully
 - candidate exposes enough behavior for honest evaluation and replay-style attacks
 
-### `T013` Implement baseline candidate family `optical_auth`
+### `T013` Implement baseline candidate family `optical_auth` [done]
 
 Why:
 
@@ -314,7 +366,7 @@ Acceptance criteria:
 - candidate builds successfully
 - candidate supports configurable feature extraction, thresholding, and session policy
 
-### `T014` Implement baseline world `lab_clean`
+### `T014` Implement baseline world `lab_clean` [done]
 
 Why:
 
@@ -334,7 +386,7 @@ Acceptance criteria:
 - low-noise deterministic world instance can be sampled
 - all core parameters are persisted into artifacts
 
-### `T015` Implement baseline world `phone_reader_indoor`
+### `T015` Implement baseline world `phone_reader_indoor` [done]
 
 Why:
 
@@ -356,7 +408,7 @@ Acceptance criteria:
 
 ## Phase 2: Evaluator Core
 
-### `T020` Implement honest evaluator
+### `T020` Implement honest evaluator [done]
 
 Why:
 
@@ -381,7 +433,7 @@ Acceptance criteria:
 - emits machine-readable metrics artifact
 - fails clearly when metrics are unavailable
 
-### `T021` Implement constraints engine
+### `T021` Implement constraints engine [done]
 
 Why:
 
@@ -401,8 +453,9 @@ Acceptance criteria:
 - candidates that violate hard thresholds are marked `rejected`
 - reasons for rejection are explicit and persisted
 - constrained-out candidates never reach the frontier
+- the default scoring config includes strong-result and proof-policy settings
 
-### `T022` Implement scoring engine
+### `T022` Implement scoring engine [done]
 
 Why:
 
@@ -421,8 +474,9 @@ Acceptance criteria:
 - only valid survivors receive a score
 - security terms are not averaged away behind soft utility
 - weighted utility is reproducible from stored inputs
+- strong-result classification is computed from configuration rather than hidden code defaults
 
-### `T023` Implement top-level `evaluate` command
+### `T023` Implement top-level `evaluate` command [done]
 
 Why:
 
@@ -448,7 +502,7 @@ Acceptance criteria:
 
 ## Phase 2.5: Formal Spine
 
-### `T024` Define Lean abstract core model
+### `T024` Define Lean abstract core model [done]
 
 Why:
 
@@ -472,7 +526,7 @@ Acceptance criteria:
 - assumptions and claim statements can be represented explicitly
 - the Lean modules are organized for incremental extension
 
-### `T025` Implement formal claim bridge and artifact plumbing
+### `T025` Implement formal claim bridge and artifact plumbing [pending]
 
 Why:
 
@@ -488,15 +542,17 @@ Depends on:
 Outputs:
 
 - `src/pufopt/formal/bridge.py`
+- `formal/Autopuf/Bridge.lean`
 - formal claim artifacts in run outputs
 
 Acceptance criteria:
 
 - a run can emit `formal_claim_id`
 - a run can emit `proof_status`
+- a supported run can emit a bounded differential-check artifact
 - formal claim artifacts are written deterministically
 
-### `T026` Add bounded differential checks between Python and Lean reference semantics
+### `T026` Add bounded differential checks between Python and Lean reference semantics [pending]
 
 Why:
 
@@ -520,7 +576,7 @@ Acceptance criteria:
 
 ## Phase 3: Adversarial Core
 
-### `T030` Implement attack base classes and budget handling
+### `T030` Implement attack base classes and budget handling [done]
 
 Why:
 
@@ -539,7 +595,7 @@ Acceptance criteria:
 - attack interface is concrete enough for implementations
 - attack budgets are serializable and enforced
 
-### `T031` Implement modeling attack
+### `T031` Implement modeling attack [done]
 
 Why:
 
@@ -560,7 +616,7 @@ Acceptance criteria:
 - outputs best attack found under budget
 - writes attack trace artifact
 
-### `T032` Implement replay attack
+### `T032` Implement replay attack [done]
 
 Why:
 
@@ -580,7 +636,7 @@ Acceptance criteria:
 - attack can exploit observed responses when allowed by world/candidate assumptions
 - success metric is persisted
 
-### `T033` Implement nearest-match counterfeit attack
+### `T033` Implement nearest-match counterfeit attack [done]
 
 Why:
 
@@ -600,7 +656,7 @@ Acceptance criteria:
 - attack searches for closest observed or synthesized sample under threshold
 - counterfeit acceptance rate is reported
 
-### `T034` Implement CRP exhaustion attack
+### `T034` Implement CRP exhaustion attack [done]
 
 Why:
 
@@ -620,7 +676,7 @@ Acceptance criteria:
 - attack models challenge depletion or safe-session collapse
 - lifetime reduction is reported explicitly
 
-### `T035` Implement drift abuse attack
+### `T035` Implement drift abuse attack [done]
 
 Why:
 
@@ -640,7 +696,7 @@ Acceptance criteria:
 - attack perturbs within allowed environmental budget
 - success is measured as induced false accept or false reject behavior
 
-### `T036` Implement top-level `attack` command
+### `T036` Implement top-level `attack` command [done]
 
 Why:
 
@@ -663,7 +719,7 @@ Acceptance criteria:
 
 ## Phase 4: Aggregation And Search
 
-### `T040` Implement adversarial evaluator orchestration
+### `T040` Implement adversarial evaluator orchestration [done]
 
 Why:
 
@@ -689,7 +745,7 @@ Acceptance criteria:
 - returns one `EvaluationResult`
 - marks run `untrusted` if required attacks are missing
 
-### `T041` Implement frontier maintenance
+### `T041` Implement frontier maintenance [done]
 
 Why:
 
@@ -709,7 +765,7 @@ Acceptance criteria:
 - dominated candidates are tracked separately
 - repeated updates are deterministic
 
-### `T042` Implement candidate mutations
+### `T042` Implement candidate mutations [done]
 
 Why:
 
@@ -729,7 +785,7 @@ Acceptance criteria:
 - mutations preserve schema validity
 - mutations stay inside declared parameter domains
 
-### `T043` Implement scheduler
+### `T043` Implement scheduler [done]
 
 Why:
 
@@ -749,7 +805,7 @@ Acceptance criteria:
 - scheduler supports exploration and exploitation modes
 - scheduler can prioritize falsification of strong survivors
 
-### `T044` Implement optimize loop
+### `T044` Implement optimize loop [done]
 
 Why:
 
@@ -761,6 +817,8 @@ Depends on:
 - `T041`
 - `T042`
 - `T043`
+- `T025`
+- `T026`
 
 Outputs:
 
@@ -773,7 +831,7 @@ Acceptance criteria:
 - run writes frontier snapshots and run artifacts
 - at least one mutation cycle occurs automatically
 
-### `T045` Implement frontier and report commands
+### `T045` Implement frontier and report commands [done]
 
 Why:
 
@@ -797,7 +855,7 @@ Acceptance criteria:
 
 ## Phase 5: Validation And Research Utility
 
-### `T050` Create literature-aligned regression fixtures
+### `T050` Create literature-aligned regression fixtures [pending]
 
 Why:
 
@@ -819,7 +877,7 @@ Acceptance criteria:
 - includes at least one CRP-limited construction
 - includes at least one trust-limited remote-auth-like construction
 
-### `T051` Implement regression suites
+### `T051` Implement regression suites [pending]
 
 Why:
 
@@ -840,7 +898,7 @@ Acceptance criteria:
 - suite reproduces at least two literature-aligned failure modes
 - failure conditions are asserted in tests
 
-### `T052` Implement example run reports
+### `T052` Implement example run reports [pending]
 
 Why:
 
@@ -863,7 +921,7 @@ Acceptance criteria:
 
 ## Phase 6: Researcher Usability
 
-### `T060` Add starter candidate and world library
+### `T060` Add starter candidate and world library [pending]
 
 Why:
 
@@ -885,7 +943,7 @@ Acceptance criteria:
 - at least four candidate examples and three world examples exist
 - each example is schema-valid and runnable
 
-### `T061` Add suite templates
+### `T061` Add suite templates [pending]
 
 Why:
 
@@ -907,7 +965,7 @@ Acceptance criteria:
 
 - each suite template runs without manual editing
 
-### `T062` Add runbook section for first-time operators
+### `T062` Add runbook section for first-time operators [pending]
 
 Why:
 
@@ -930,49 +988,61 @@ Acceptance criteria:
 
 Do these in this exact order:
 
-1. `T001`
-2. `T002`
-3. `T003`
-4. `T004`
-5. `T005`
-6. `T006`
-7. `T010`
-8. `T011`
-9. `T012`
-10. `T014`
-11. `T020`
-12. `T021`
-13. `T022`
-14. `T023`
-15. `T030`
-16. `T031`
-17. `T032`
-18. `T040`
-19. `T041`
-20. `T044`
-21. `T007`
-22. `T008`
-23. `T024`
-24. `T025`
-25. `T026`
-26. `T050`
-27. `T051`
+1. `T000`
+2. `T001`
+3. `T002`
+4. `T003`
+5. `T004`
+6. `T005`
+7. `T006`
+8. `T007`
+9. `T008`
+10. `T010`
+11. `T011`
+12. `T012`
+13. `T013`
+14. `T014`
+15. `T015`
+16. `T020`
+17. `T021`
+18. `T022`
+19. `T023`
+20. `T024`
+21. `T025`
+22. `T030`
+23. `T031`
+24. `T032`
+25. `T033`
+26. `T034`
+27. `T035`
+28. `T036`
+29. `T040`
+30. `T041`
+31. `T026`
+32. `T042`
+33. `T043`
+34. `T044`
+35. `T050`
+36. `T051`
 
 This is the minimum path to a credible `v1`.
 
 ## Recommended Parallelization After Foundations
 
-After `T006`, split work like this:
+After `T008`, split work like this while preserving dependencies:
 
-- Track A: `T010`, `T012`, `T013`
-- Track B: `T011`, `T014`, `T015`
-- Track C: `T020`, `T021`, `T022`
-- Track D: `T030`, `T031`, `T032`, then `T033`, `T034`, `T035`
-- Track E: `T007`, `T008`, `T024`, then `T025`, `T026`
+- Track A: `T010`, then `T012` and `T013`
+- Track B: `T011`, then `T014` and `T015`
+- Track C: after `T020`, run `T021`, then `T022`
+- Track D: after `T023` and `T024`, run `T025`, then `T026`
+- Track E: after `T020` and `T030`, run `T031`, `T032`, `T033`, `T034`, and `T035`, then `T036`
+- Track F: after `T040`, run `T041` and `T042`, then `T043`
 
-Merge point:
+Primary merge points:
 
-- `T040`
+- `T020` for evaluator work
+- `T040` for adversarial aggregation
+- `T044` for the first autonomous optimize loop
 
 ## Definition Of Done
 

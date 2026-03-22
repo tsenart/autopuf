@@ -1,0 +1,5 @@
+2026-03-21T23:58: inspected local toolchain state and confirmed Lean was missing.
+2026-03-21T23:59: installed `elan-init` with Homebrew.
+2026-03-21T23:59: initialized Lean stable with `elan-init -y --default-toolchain stable`.
+2026-03-22T00:00: verified `python3`, `pip3`, `git`, `lean`, and `lake`.
+2026-03-22T00:03: created `.venv` and verified repo-local Python and pip commands.

@@ -1,6 +1,4 @@
-id: example-promotion
-kind: task
-target_id: T000
+task_id: T000
 status: promoted
 promoted_by: Integrator
 gates:
@@ -9,8 +7,10 @@ gates:
   acceptance_gate: pass
   red_review_gate: pass
   reproduction_gate: pass
+  formal_contract_gate: n_a
 evidence:
   verification: ops/tasks/T000/verification.json
+  formal_check: null
   red_review: ops/tasks/T000/red_review.md
   reproduction: ops/tasks/T000/reproduction_report.md
 notes: Replace with promotion notes.

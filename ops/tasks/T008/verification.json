@@ -1,0 +1,30 @@
+{
+  "task_id": "T008",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m unittest tests.test_types tests.test_schema",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "proof_status_values_defined_and_validated",
+      "passed": true
+    },
+    {
+      "name": "formal_claim_manifests_validate",
+      "passed": true
+    },
+    {
+      "name": "evaluation_artifacts_can_reference_formal_claim_and_proof_status",
+      "passed": true
+    },
+    {
+      "name": "promotion_artifacts_record_formal_gate_outcomes",
+      "passed": true
+    }
+  ],
+  "notes": "Proof status and formal claim handling are consistent across the current Python and Lean boundary."
+}
+

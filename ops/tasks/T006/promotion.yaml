@@ -1,0 +1,16 @@
+task_id: T006
+status: promoted
+promoted_by: Integrator
+gates:
+  schema_gate: pass
+  output_gate: pass
+  acceptance_gate: pass
+  red_review_gate: pass
+  reproduction_gate: pass
+  formal_contract_gate: n_a
+evidence:
+  verification: ops/tasks/T006/verification.json
+  formal_check: ops/tasks/T006/formal_check.json
+  red_review: ops/tasks/T006/red_review.md
+  reproduction: ops/tasks/T006/reproduction_report.md
+notes: Test harness and local verification conventions are established.

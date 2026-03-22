@@ -1,0 +1,26 @@
+{
+  "task_id": "T005",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m pufopt.cli --help",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python -m unittest tests.test_cli_smoke",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "required_commands_present_in_help",
+      "passed": true
+    },
+    {
+      "name": "command_parsing_covered_by_tests",
+      "passed": true
+    }
+  ],
+  "notes": "CLI help and parser coverage now match the planned command surface."
+}
+

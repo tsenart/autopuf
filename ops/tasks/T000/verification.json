@@ -1,0 +1,54 @@
+{
+  "task_id": "T000",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": "python3 --version",
+      "exit_code": 0
+    },
+    {
+      "cmd": "pip3 --version",
+      "exit_code": 0
+    },
+    {
+      "cmd": "git --version",
+      "exit_code": 0
+    },
+    {
+      "cmd": "lean --version",
+      "exit_code": 0
+    },
+    {
+      "cmd": "lake --version",
+      "exit_code": 0
+    },
+    {
+      "cmd": "python3 -m venv .venv",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python --version",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/pip --version",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "required_tools_listed",
+      "passed": true
+    },
+    {
+      "name": "validation_commands_listed",
+      "passed": true
+    },
+    {
+      "name": "build_sequence_starts_with_bootstrap",
+      "passed": true
+    }
+  ],
+  "notes": "Lean 4 stable is installed through elan and the repo-local virtual environment is available."
+}
+

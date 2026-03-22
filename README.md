@@ -2,7 +2,7 @@
 
 Autonomous adversarial evaluator and optimizer for PUF research.
 
-This repository is the implementation plan for an autonomous, falsification-first optimizer for PUF research.
+This repository contains the working implementation and operating docs for an autonomous, falsification-first optimizer for PUF research.
 
 The system does not try to "read papers better." It tries to find the best surviving design under attack, noise, drift, and deployment constraints.
 
@@ -21,6 +21,72 @@ This is the smallest core that is both useful and achievable:
 
 - useful because it can eliminate weak designs, rank surviving candidates, and suggest the next most informative experiment
 - achievable because `v1` can run fully in software against known public results
+
+## Start Here
+
+For José Senart, or anyone touching the repo for the first time, this is the clean path:
+
+1. Bootstrap the repo:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -U pip
+.venv/bin/python -m pip install -e .
+cd formal && lake build && cd ..
+```
+
+2. Run one evaluation:
+
+```bash
+.venv/bin/python -m pufopt.cli evaluate \
+  --candidate candidates/baseline-classical-crp-001.yaml \
+  --world configs/worlds/lab-clean-v1.yaml
+```
+
+3. Run one full optimization loop:
+
+```bash
+.venv/bin/python -m pufopt.cli optimize \
+  --suite suites/v1-auth-search.yaml
+```
+
+4. Inspect the results:
+
+```bash
+.venv/bin/python -m pufopt.cli frontier --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.cli report --run artifacts/runs/<run_id>
+```
+
+What exists today:
+
+- working `evaluate`, `attack`, `optimize`, `frontier`, and `report` commands
+- two baseline candidate families
+- two baseline world families
+- five attack families
+- constrained scoring and frontier maintenance
+- a functioning Lean workspace and proof-status plumbing
+
+What is still explicitly unfinished:
+
+- Python-Lean differential checks
+- literature-aligned regression fixtures and regression suites
+- starter template library and example generated reports
+
+## Current Status
+
+Implemented now:
+
+- foundations through package, schema, artifacts, CLI, tests, and Lean workspace
+- candidate/world registries and baseline families
+- honest evaluation, constraints, scoring, and proof-status tagging
+- modeling, replay, nearest-match, CRP exhaustion, and drift-abuse attacks
+- adversarial evaluation, frontier maintenance, mutation, scheduling, and optimization
+
+Remaining work:
+
+- formal bridge hardening and bounded differential checks
+- literature-aligned regression suites
+- example reports and expanded starter libraries
 
 ## Mission
 
@@ -108,8 +174,9 @@ The system is a closed loop:
 3. Evaluate honest performance
 4. Run adversarial search
 5. Aggregate score and constraints
-6. Update frontier
-7. Choose next candidate or next experiment
+6. Formalize strong or promoted claims
+7. Update frontier
+8. Choose next candidate or next experiment
 
 Outputs:
 
@@ -133,6 +200,7 @@ Outputs:
 ├── RUNBOOK.md
 ├── pyproject.toml
 ├── formal/
+│   ├── lean-toolchain
 │   ├── lakefile.lean
 │   ├── Main.lean
 │   └── Autopuf/
@@ -199,6 +267,28 @@ Outputs:
 │   └── frontier/
 └── tests/
 ```
+
+## Toolchain Contract
+
+For deterministic execution, the repo uses these command conventions:
+
+- `python3` is the canonical Python command in docs and task manifests
+- `pip3` is the canonical package installer command in docs and task manifests
+- project-local installs and CLI runs should use `.venv/bin/python` after bootstrap
+- Lean commands run from `formal/`, not the repo root
+
+Minimum environment:
+
+- Python `3.11+`
+- Git on `PATH`
+- Lean 4 and `lake` on `PATH`
+
+Bootstrap expectation:
+
+- create a local virtual environment with `python3 -m venv .venv`
+- use `.venv/bin/python` and `.venv/bin/pip` for repo-local installs and execution
+
+If the environment does not satisfy this contract, `T000` should remain `blocked` until the toolchain is fixed.
 
 ## Main Abstractions
 
@@ -313,6 +403,20 @@ class FormalClaim(Protocol):
     assumptions: list[str]
     proof_status: str
 ```
+
+## Strong Result Policy
+
+Formalization is triggered by a machine-readable strong-result policy.
+
+Default rule:
+
+- a result is `strong` if it is a valid survivor and at least one of these is true:
+  - it enters or updates the frontier
+  - it exceeds a configured score threshold
+  - it exceeds a configured improvement threshold over baseline
+- a result is `surprising` if it contradicts an expected regression boundary or materially exceeds prior baselines by a configured margin
+
+`v1` should keep this policy in the scoring or run configuration rather than in code-only defaults.
 
 ## Canonical Metrics
 
@@ -439,10 +543,14 @@ def optimize(search_space, world_bank, attack_bank, budget):
         attacks = scheduler.pick_attacks(attack_bank, candidate, world)
 
         result = evaluator.evaluate(candidate, world, attacks)
+        score = scorer.compute(result)
+        formal = formalizer.sync_if_needed(candidate, score)
         storage.write_result(result)
-        frontier.update(result)
+        storage.write_score(score)
+        storage.write_formal_status(formal)
+        frontier.update(score)
 
-        if result.is_survivor:
+        if score.is_survivor:
             queue.extend(mutate(candidate, result))
         else:
             queue.extend(learn_from_failure(candidate, result))
@@ -585,15 +693,24 @@ Each run writes a directory:
 ```text
 artifacts/runs/<run_id>/
 ├── suite.yaml
-├── candidate.yaml
-├── world.yaml
+├── candidate/
+│   └── candidate.yaml
+├── world/
+│   └── world.yaml
+├── honest/
+│   └── metrics.json
 ├── attacks/
 │   └── *.json
 ├── formal/
 │   ├── claim.yaml
-│   └── proof_status.json
-├── metrics.json
-├── score.json
+│   ├── proof_status.json
+│   └── differential_check.json
+├── score/
+│   └── score.json
+├── frontier/
+│   └── update.json
+├── planner/
+│   └── decision.json
 ├── logs.txt
 └── summary.md
 ```
@@ -607,17 +724,18 @@ The CLI is the public interface of the system.
 Required commands:
 
 ```bash
-python -m pufopt.cli optimize --suite suites/v1-auth-search.yaml
-python -m pufopt.cli evaluate --candidate candidates/foo.yaml --world configs/worlds/bar.yaml
-python -m pufopt.cli attack --candidate candidates/foo.yaml --world configs/worlds/bar.yaml --attack modeling
-python -m pufopt.cli frontier --run artifacts/runs/<run_id>
-python -m pufopt.cli report --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.cli optimize --suite suites/v1-auth-search.yaml
+.venv/bin/python -m pufopt.cli evaluate --candidate candidates/foo.yaml --world configs/worlds/bar.yaml
+.venv/bin/python -m pufopt.cli attack --candidate candidates/foo.yaml --world configs/worlds/bar.yaml --attack modeling
+.venv/bin/python -m pufopt.cli frontier --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.cli report --run artifacts/runs/<run_id>
 ```
 
 ## Implementation Order
 
 ### Milestone 0
 
+- bootstrap and validate the Python and Lean toolchains
 - create package skeleton
 - define types and schemas
 - implement local artifact storage
@@ -715,7 +833,7 @@ The autonomous execution layer lives in:
 
 ## Open Questions For `v2`
 
-- when to integrate theorem-proving or proof-carrying results
+- how far to extend formal proofs beyond proof-status tracking and bounded differential checks
 - when to add hardware-in-the-loop evaluation
 - how to translate materials observations into cryptographic metrics
 - how to optimize experiment selection by expected information gain

@@ -1,0 +1,4 @@
+2026-03-22T00:00: created the `src/` package layout and `tests/` directory.
+2026-03-22T00:00: added `pyproject.toml`, package modules, and a minimal CLI scaffold.
+2026-03-22T00:03: created `.venv` and installed the package in editable mode.
+2026-03-22T00:03: verified CLI help, smoke test execution, and side-effect-free imports.

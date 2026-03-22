@@ -1,0 +1,57 @@
+id: T005
+title: Create CLI skeleton
+status: promoted
+phase: Phase 0
+objective: >
+  Provide the public CLI surface for optimize, evaluate, attack, frontier, and
+  report so the system can be used without editing Python code.
+depends_on:
+  - T000
+  - T001
+inputs:
+  design_docs:
+    - README.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - src/pufopt/cli.py
+    - tests/test_cli_smoke.py
+  formal_paths: []
+allowed_write_paths:
+  - src/pufopt/cli.py
+  - tests/
+  - ops/tasks/T005/
+required_outputs:
+  - src/pufopt/cli.py
+  - tests/test_cli_smoke.py
+acceptance_criteria:
+  - these commands exist and print structured help:
+    - optimize
+    - evaluate
+    - attack
+    - frontier
+    - report
+  - command parsing is covered by tests
+required_commands:
+  - .venv/bin/python -m pufopt.cli --help
+  - .venv/bin/python -m unittest tests.test_cli_smoke
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - CLI help diverging from the planned command surface
+  - placeholder handlers masking parser issues
+escalation_triggers:
+  - the CLI surface needs a different command model than the current design docs
+  - parser behavior conflicts with the task backlog
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator
+

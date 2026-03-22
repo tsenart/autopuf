@@ -1,12 +1,13 @@
 id: T001
 title: Create Python package skeleton
-status: ready
+status: promoted
 phase: Phase 0
 objective: >
   Create the initial package and repository skeleton so the project has a valid
   Python entry point, editable install support, and the directory structure
   expected by the design documents.
-depends_on: []
+depends_on:
+  - T000
 inputs:
   design_docs:
     - README.md
@@ -18,23 +19,28 @@ inputs:
   code_paths:
     - README.md
     - TASKS.md
+  formal_paths: []
 allowed_write_paths:
+  - .gitignore
   - pyproject.toml
   - src/
   - tests/
 required_outputs:
+  - .gitignore
   - pyproject.toml
   - src/pufopt/__init__.py
   - src/pufopt/cli.py
   - tests/
 acceptance_criteria:
-  - python -m pufopt.cli --help resolves
+  - .venv/bin/python -m pufopt.cli --help resolves
   - the package installs in editable mode
   - empty modules import without side effects
 required_commands:
-  - python -m pufopt.cli --help
+  - .venv/bin/python -m pip install -e .
+  - .venv/bin/python -m pufopt.cli --help
 artifacts:
   - verification.json
+  - formal_check.json
   - red_review.md
   - reproduction_report.md
 risks:
@@ -43,6 +49,9 @@ risks:
 escalation_triggers:
   - unresolved ambiguity in package name or module layout
   - any need to change the top-level architecture described in README.md
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
 owner_role: Builder
 reviewer_role: Red Reviewer
 promoter_role: Integrator

@@ -1,0 +1,5 @@
+2026-03-22T00:10: defined shared scalar, JSON-like, and status aliases.
+2026-03-22T00:11: added dataclasses for specs, results, scorecards, frontier entries, and planner decisions.
+2026-03-22T00:11: added runtime-checkable protocols for candidates, worlds, attacks, and evaluators.
+2026-03-22T00:11: added unit coverage for shared type construction and proof-status vocabulary.
+

@@ -1,0 +1,37 @@
+{
+  "task_id": "T001",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m pip install -e .",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python -m pufopt.cli --help",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python tests/import_smoke.py",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "cli_help_resolves",
+      "passed": true
+    },
+    {
+      "name": "editable_install_succeeds",
+      "passed": true
+    },
+    {
+      "name": "placeholder_modules_import_without_side_effects",
+      "passed": true
+    }
+  ],
+  "notes": "The package installs inside `.venv`, the CLI exposes the required command surface, and the placeholder modules import cleanly."
+}

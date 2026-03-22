@@ -21,7 +21,8 @@ Initialize the Lean workspace so `autopuf` has a formal spine from day 0.
 
 - the Lean workspace is initialized
 - build instructions are captured in the repo
-- the workspace layout supports `Autopuf/Model.lean`, `Autopuf/Games.lean`, and `Autopuf/Claims.lean`
+- the workspace layout supports `Autopuf/Model.lean`, `Autopuf/Games.lean`, `Autopuf/Claims.lean`, and `Autopuf/Bridge.lean`
+- the workspace builds from `formal/` with `lake build`
 
 ## Non-Goals
 

@@ -12,17 +12,23 @@ inputs:
     - TASKS.md
     - WORKFLOWS.md
     - TASK_TEMPLATE.md
+    - RUNBOOK.md
   code_paths: []
+  formal_paths: []
 allowed_write_paths: []
 required_outputs: []
 acceptance_criteria: []
 required_commands: []
 artifacts:
   - verification.json
+  - formal_check.json
   - red_review.md
   - reproduction_report.md
 risks: []
 escalation_triggers: []
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
 owner_role: Builder
 reviewer_role: Red Reviewer
 promoter_role: Integrator

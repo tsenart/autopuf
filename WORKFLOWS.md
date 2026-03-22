@@ -51,6 +51,21 @@ Use this exact vocabulary for formal claim status:
 - `proved`
 - `counterexample_found`
 
+## Strong Result Policy
+
+Strong and surprising results must be determined by configuration, not by free-form judgment.
+
+Default policy:
+
+- `strong_result` means:
+  - the result is a valid survivor
+  - and it either updates the frontier, exceeds a configured score threshold, or exceeds a configured improvement threshold over baseline
+- `surprising_result` means:
+  - the result contradicts a regression expectation
+  - or exceeds a configured improvement threshold over the best prior baseline
+
+The scoring or run config should carry these thresholds explicitly.
+
 ## Global Status Vocabulary
 
 Use this exact vocabulary for task and run states:
@@ -298,6 +313,7 @@ Allowed transitions:
 - `Verifier`: move tasks to `self_tested`
 - `Red Reviewer`: move tasks to `red_reviewed`
 - `Reproducer`: move tasks to `reproduced`
+- `Formal Checker`: validate `formal_check.json` for tasks that require it
 - `Integrator`: move tasks to `promoted`
 
 ## Delivery Promotion Gates
@@ -317,6 +333,12 @@ Each task must pass all of these before `promoted`:
 6. `Formal Contract Gate`
    - tasks touching the formal spine must validate their claim schemas and bridge outputs
 
+Gate values should be:
+
+- `pass`
+- `fail`
+- `n_a`
+
 ## Delivery Artifact Contract
 
 Each active task should use this directory:
@@ -329,6 +351,7 @@ ops/tasks/<task_id>/
 ├── activity.log
 ├── implementation_report.md
 ├── verification.json
+├── formal_check.json
 ├── red_review.md
 ├── reproduction_report.md
 ├── blocker.md
@@ -375,6 +398,11 @@ def run_delivery_task(task):
         return
     task.status = "reproduced"
 
+    formal = formal_checker.check(task)
+    if task.formal_contract_required and not formal.passed:
+        task.status = "implemented"
+        return
+
     integrator.promote(task)
     task.status = "promoted"
 ```
@@ -411,8 +439,8 @@ Meaning:
 Required artifacts:
 
 - `artifacts/runs/<run_id>/suite.yaml`
-- `artifacts/runs/<run_id>/candidate.yaml`
-- `artifacts/runs/<run_id>/world.yaml`
+- `artifacts/runs/<run_id>/candidate/candidate.yaml`
+- `artifacts/runs/<run_id>/world/world.yaml`
 
 Allowed transitions:
 
@@ -440,7 +468,7 @@ Meaning:
 Required artifacts:
 
 - all required attack outputs
-- raw metrics
+- `honest/metrics.json`
 
 Allowed transitions:
 
@@ -455,8 +483,8 @@ Meaning:
 
 Required artifacts:
 
-- `metrics.json`
-- `score.json`
+- `honest/metrics.json`
+- `score/score.json`
 
 Allowed transitions:
 
@@ -505,6 +533,8 @@ Meaning:
 Required artifacts:
 
 - `frontier/update.json` or `planner/decision.json`
+- `formal/claim.yaml` and `formal/proof_status.json` when required by proof policy
+- `formal/differential_check.json` when the differential gate applies
 
 Allowed transitions:
 
@@ -560,7 +590,7 @@ def run_research_job(job):
     score = scorer.compute(result)
     job.status = "self_tested"
 
-    if is_strong_or_surprising(score):
+    if is_strong_or_surprising(score, job.policy):
         review = red_team.intensify(job, result)
         if review.breaks_result:
             job.status = "implemented"

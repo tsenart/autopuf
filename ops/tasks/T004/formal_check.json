@@ -1,0 +1,8 @@
+{
+  "task_id": "T004",
+  "required": false,
+  "passed": true,
+  "checks": [],
+  "notes": "Artifact storage does not modify the formal spine."
+}
+

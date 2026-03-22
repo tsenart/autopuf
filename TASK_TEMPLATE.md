@@ -15,6 +15,7 @@ ops/tasks/<task_id>/
 ├── plan.md
 ├── activity.log
 ├── verification.json
+├── formal_check.json
 ├── red_review.md
 ├── reproduction_report.md
 └── promotion.yaml
@@ -61,9 +62,10 @@ acceptance_criteria:
   - writes attack trace artifact
 required_commands:
   - pytest tests/test_modeling_attack.py
-  - python -m pufopt.cli attack --candidate candidates/foo.yaml --world configs/worlds/bar.yaml --attack modeling
+  - .venv/bin/python -m pufopt.cli attack --candidate candidates/foo.yaml --world configs/worlds/bar.yaml --attack modeling
 artifacts:
   - verification.json
+  - formal_check.json
   - red_review.md
   - reproduction_report.md
 risks:
@@ -74,6 +76,7 @@ escalation_triggers:
   - honest evaluator does not expose sufficient features
 formal_claim_id: null
 proof_status_required: false
+formal_contract_required: false
 owner_role: Builder
 reviewer_role: Red Reviewer
 promoter_role: Integrator
@@ -98,6 +101,7 @@ promoter_role: Integrator
 - `escalation_triggers`: conditions that require human review or task blocking
 - `formal_claim_id`: optional link to a formal claim for tasks that implement or modify the formal spine
 - `proof_status_required`: whether the task must emit or update proof-status artifacts before promotion
+- `formal_contract_required`: whether the task must emit a formal-gate check before promotion
 
 ## `context.md` Contract
 
@@ -236,12 +240,39 @@ gates:
   acceptance_gate: pass
   red_review_gate: pass
   reproduction_gate: pass
+  formal_contract_gate: n_a
 evidence:
   verification: ops/tasks/T031/verification.json
+  formal_check: null
   red_review: ops/tasks/T031/red_review.md
   reproduction: ops/tasks/T031/reproduction_report.md
 notes: Modeling attack implementation accepted.
 ```
+
+Gate values should be:
+
+- `pass`
+- `fail`
+- `n_a`
+
+## `formal_check.json` Contract
+
+Use this shape:
+
+```json
+{
+  "task_id": "T031",
+  "required": false,
+  "passed": true,
+  "checks": [],
+  "notes": "Set required=true for tasks that touch the formal spine."
+}
+```
+
+Rules:
+
+- tasks with `formal_contract_required: true` must emit at least one formal check
+- tasks with `formal_contract_required: false` may emit a trivial pass artifact
 
 ## Execution Rules
 
@@ -250,6 +281,7 @@ notes: Modeling attack implementation accepted.
 - The red reviewer may propose changes but may not silently apply them.
 - If acceptance criteria are ambiguous, block the task instead of guessing.
 - If reproduction fails, the task cannot be promoted.
+- If `formal_contract_required` is true, missing `formal_check.json` blocks promotion.
 
 ## Minimal Human Supervision Policy
 
@@ -270,6 +302,7 @@ Everything else should be executable from the task manifest.
 4. Run required commands and write `verification.json`.
 5. Run red review and write `red_review.md`.
 6. Reproduce from clean inputs and write `reproduction_report.md`.
-7. Promote with `promotion.yaml`.
+7. Run formal checks when required and write `formal_check.json`.
+8. Promote with `promotion.yaml`.
 
 This is the minimum contract for autonomous implementation.

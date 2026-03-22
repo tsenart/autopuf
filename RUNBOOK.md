@@ -10,6 +10,38 @@ The operator can be:
 
 The runbook assumes the workflow rules in [WORKFLOWS.md](/Users/tomas/code/pufs/WORKFLOWS.md) and the task contracts in [TASK_TEMPLATE.md](/Users/tomas/code/pufs/TASK_TEMPLATE.md).
 
+## Prerequisites
+
+Required local tools:
+
+- `python3`
+- `pip3`
+- `git`
+- `lean`
+- `lake`
+
+Optional but recommended:
+
+- `gh`
+
+Minimum validation commands:
+
+- `python3 --version`
+- `pip3 --version`
+- `git --version`
+- `lean --version`
+- `lake --version`
+- `python3 -m venv .venv`
+- `.venv/bin/python --version`
+- `.venv/bin/pip --version`
+
+Command policy:
+
+- use `python3` in repo commands and task manifests
+- use `pip3` for installation commands unless the environment provides a guaranteed equivalent wrapper
+- create and use `.venv` for repo-local Python installation and execution
+- run Lean builds from `formal/`
+
 ## Operating Modes
 
 ### `build`
@@ -151,7 +183,18 @@ If reproduction fails:
 - return to `implemented` if fixable
 - otherwise mark `untrusted` or `blocked`
 
-### Step 7: Promote
+### Step 7: Formal contract check
+
+For tasks with `formal_contract_required: true`:
+
+- validate the formal bridge or claim schema outputs
+- write `formal_check.json`
+
+If the formal contract check fails:
+
+- return to `implemented`
+
+### Step 8: Promote
 
 Create:
 
@@ -175,6 +218,8 @@ Freeze:
 - attack set
 - budgets
 - scoring config
+- strong-result policy
+- proof policy
 
 ### Step 2: Run honest evaluation
 
@@ -211,7 +256,7 @@ Do not rank rejected candidates.
 
 ### Step 5: Intensify on strong or surprising results
 
-If a result is:
+If the configured strong-result or surprising-result policy triggers, for example because a result is:
 
 - near the top of the frontier
 - much stronger than prior baselines
@@ -230,6 +275,7 @@ For any strong or promoted result:
 - assign or update `formal_claim_id`
 - assign `proof_status`
 - if the family is supported by Lean reference semantics, run bounded differential checks
+- write the bounded differential result to `formal/differential_check.json`
 
 If formalization fails:
 
@@ -312,16 +358,16 @@ This can be machine-readable or markdown, but it must be concise and auditable.
 The repository should eventually expose these commands:
 
 ```bash
-python -m pufopt.cli evaluate --candidate ... --world ...
-python -m pufopt.cli attack --candidate ... --world ... --attack modeling
-python -m pufopt.cli optimize --suite ...
-python -m pufopt.cli frontier --run ...
-python -m pufopt.cli report --run ...
-python -m pufopt.ops next-task
-python -m pufopt.ops pack-context --task T031
-python -m pufopt.ops verify-task --task T031
-python -m pufopt.ops promote-task --task T031
-python -m pufopt.ops formalize-claim --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.cli evaluate --candidate ... --world ...
+.venv/bin/python -m pufopt.cli attack --candidate ... --world ... --attack modeling
+.venv/bin/python -m pufopt.cli optimize --suite ...
+.venv/bin/python -m pufopt.cli frontier --run ...
+.venv/bin/python -m pufopt.cli report --run ...
+.venv/bin/python -m pufopt.ops next-task
+.venv/bin/python -m pufopt.ops pack-context --task T031
+.venv/bin/python -m pufopt.ops verify-task --task T031
+.venv/bin/python -m pufopt.ops promote-task --task T031
+.venv/bin/python -m pufopt.ops formalize-claim --run artifacts/runs/<run_id>
 ```
 
 The `pufopt.ops` commands are not implemented yet, but this is the intended autonomous control plane.

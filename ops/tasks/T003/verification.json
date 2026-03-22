@@ -1,0 +1,42 @@
+{
+  "task_id": "T003",
+  "status": "self_tested",
+  "commands": [
+    {
+      "cmd": ".venv/bin/python -m pip install -e .",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python -m unittest tests.test_schema",
+      "exit_code": 0
+    },
+    {
+      "cmd": ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "invalid_candidate_specs_rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid_world_specs_rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid_suite_specs_rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid_formal_claims_rejected",
+      "passed": true
+    },
+    {
+      "name": "schema_validation_has_unit_tests",
+      "passed": true
+    }
+  ],
+  "notes": "Schema validation works for YAML and JSON inputs and raises actionable errors for invalid documents."
+}
+

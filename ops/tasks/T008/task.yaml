@@ -1,0 +1,60 @@
+id: T008
+title: Define formal claim schema and proof-status types
+status: promoted
+phase: Phase 0
+objective: >
+  Make proof-status values and formal-claim manifests machine-readable and
+  usable across Python artifacts, promotion records, and the formal spine.
+depends_on:
+  - T002
+  - T003
+  - T007
+inputs:
+  design_docs:
+    - README.md
+    - AGENTS.md
+    - TASKS.md
+    - WORKFLOWS.md
+    - TASK_TEMPLATE.md
+    - RUNBOOK.md
+  code_paths:
+    - src/pufopt/types.py
+    - src/pufopt/storage/schema.py
+    - ops/templates/formal-claim.yaml
+    - ops/templates/promotion.yaml
+  formal_paths:
+    - formal/Autopuf/Claims.lean
+allowed_write_paths:
+  - src/pufopt/types.py
+  - src/pufopt/storage/schema.py
+  - ops/templates/
+  - ops/tasks/T008/
+required_outputs:
+  - src/pufopt/types.py
+  - src/pufopt/storage/schema.py
+  - ops/templates/formal-claim.yaml
+  - ops/templates/promotion.yaml
+acceptance_criteria:
+  - proof status values are defined and validated
+  - formal claim manifests validate
+  - evaluation artifacts can reference formal_claim_id and proof_status
+  - promotion artifacts can record formal-gate outcomes
+required_commands:
+  - .venv/bin/python -m unittest tests.test_types tests.test_schema
+artifacts:
+  - verification.json
+  - formal_check.json
+  - red_review.md
+  - reproduction_report.md
+risks:
+  - proof-status vocabulary drifting between Python and Lean
+  - formal-claim manifests validating but not mapping cleanly to promoted artifacts
+escalation_triggers:
+  - proof-status needs to change in a way that breaks the documented formal spine
+  - formal-claim schema requires broader artifact model changes
+formal_claim_id: null
+proof_status_required: false
+formal_contract_required: false
+owner_role: Builder
+reviewer_role: Red Reviewer
+promoter_role: Integrator
