@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 from pathlib import Path
 
 from pufopt.candidates.factory import build_candidate_definition
@@ -14,6 +13,8 @@ from pufopt.evaluators.scoring import load_scoring_config, score_candidate
 from pufopt.experiments.reports import render_optimization_summary
 from pufopt.experiments.selection import suggest_next_action
 from pufopt.experiments.suites import LoadedSuite, load_optimization_suite
+from pufopt.formal.bridge import finalize_formal_artifacts, supports_formal_bridge
+from pufopt.formal.proof_status import ensure_result_has_proof_status, proof_status_payload
 from pufopt.loop.frontier import FrontierState
 from pufopt.loop.scheduler import (
     SchedulerConfig,
@@ -117,9 +118,18 @@ def optimize_suite(
             frontier_updated=frontier_update.frontier_updated,
             baseline_utility=baseline_utility,
         )
-        score = _attach_default_proof_status(score)
+        score = ensure_result_has_proof_status(score)
+        if score.is_survivor or supports_formal_bridge(candidate.family):
+            score = finalize_formal_artifacts(
+                run_layout.root,
+                run_id=run_layout.run_id,
+                candidate=candidate,
+                world=world,
+                scorecard=score,
+            )
+        final_frontier_update = frontier_update
         if score.utility is not None:
-            frontier.update(score, family=candidate.family)
+            final_frontier_update = frontier.update(score, family=candidate.family)
         last_score = score
 
         mutations = mutate_candidate_spec(
@@ -139,7 +149,7 @@ def optimize_suite(
         }
         frontier_snapshot = frontier.snapshot(
             run_id=run_layout.run_id,
-            update=frontier_update,
+            update=final_frontier_update,
         )
         next_action = suggest_next_action(frontier_snapshot)
         final_snapshot = {
@@ -163,14 +173,7 @@ def optimize_suite(
             write_artifact(
                 run_layout,
                 "formal/proof_status.json",
-                {
-                    "candidate_id": score.candidate_id,
-                    "world_id": score.world_id,
-                    "formal_claim_id": score.formal_claim_id,
-                    "proof_status": score.proof_status,
-                    "strong_result": score.strong_result,
-                    "surprising_result": score.surprising_result,
-                },
+                proof_status_payload(score),
             )
         (run_layout.root / "summary.md").write_text(
             render_optimization_summary(final_snapshot),
@@ -180,12 +183,3 @@ def optimize_suite(
     if last_score is None:
         raise ValueError("optimization suite did not execute any iterations")
     return run_layout.root
-
-
-def _attach_default_proof_status(scorecard: ScoreCard) -> ScoreCard:
-    if (
-        scorecard.proof_status is None
-        and (scorecard.strong_result or scorecard.surprising_result)
-    ):
-        return replace(scorecard, proof_status="empirical_only")
-    return scorecard

@@ -48,6 +48,9 @@ class EvaluateCliTest(unittest.TestCase):
             self.assertTrue((run_dir / "attacks" / "nearest_match.json").is_file())
             self.assertTrue((run_dir / "attacks" / "crp_exhaustion.json").is_file())
             self.assertTrue((run_dir / "attacks" / "drift_abuse.json").is_file())
+            self.assertTrue((run_dir / "formal" / "claim.yaml").is_file())
+            self.assertTrue((run_dir / "formal" / "proof_status.json").is_file())
+            self.assertTrue((run_dir / "formal" / "differential_check.json").is_file())
 
             evaluation = json.loads(
                 (run_dir / "score" / "evaluation.json").read_text(encoding="utf-8")

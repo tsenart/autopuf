@@ -386,3 +386,41 @@ The workflow is world-class only if it can do all of the following with low huma
 - keep an auditable trail for every important decision
 
 If any of these are missing, the system is not autonomous enough.
+
+## First-Time Operator
+
+If you are running `autopuf` for the first time, use this sequence.
+
+Bootstrap:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -U pip
+.venv/bin/python -m pip install -e .
+cd formal && lake build && cd ..
+```
+
+Smoke run:
+
+```bash
+.venv/bin/python -m pufopt.cli optimize --suite suites/template-smoke-evaluate.yaml
+```
+
+Short optimization:
+
+```bash
+.venv/bin/python -m pufopt.cli optimize --suite suites/template-short-optimization.yaml
+```
+
+Regression validation:
+
+```bash
+.venv/bin/python -m pufopt.cli optimize --suite suites/template-regression-run.yaml
+```
+
+Inspect the latest run:
+
+```bash
+.venv/bin/python -m pufopt.cli frontier --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.cli report --run artifacts/runs/<run_id>
+```

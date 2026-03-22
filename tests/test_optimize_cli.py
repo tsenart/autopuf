@@ -36,6 +36,8 @@ class OptimizeCliTest(unittest.TestCase):
             self.assertTrue((run_dir / "planner" / "decision.json").is_file())
             self.assertTrue((run_dir / "score" / "score.json").is_file())
             self.assertTrue((run_dir / "summary.md").is_file())
+            self.assertTrue((run_dir / "formal" / "proof_status.json").is_file())
+            self.assertTrue((run_dir / "formal" / "differential_check.json").is_file())
 
             frontier = subprocess.run(
                 [

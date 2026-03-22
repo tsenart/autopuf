@@ -27,18 +27,18 @@ Done:
 
 - `T000` through `T008`
 - `T010` through `T015`
-- `T020` through `T024`
+- `T020` through `T026`
 - `T030` through `T045`
 - `T050` through `T052`
+- `T060` through `T062`
 
 Pending:
 
-- `T025` through `T026`
-- `T060` through `T062`
+- none in the current `v1` backlog
 
 Important note:
 
-- `T044` and `T045` are implemented and running now even though `T025` and `T026` are still open. The remaining formal work tightens promotion semantics rather than blocking basic evaluation and optimization.
+- the current `v1` backlog is now implemented end to end; follow-up work should extend breadth, rigor, or domain coverage rather than re-open completed baseline tasks.
 
 ## Critical Path
 
@@ -526,7 +526,7 @@ Acceptance criteria:
 - assumptions and claim statements can be represented explicitly
 - the Lean modules are organized for incremental extension
 
-### `T025` Implement formal claim bridge and artifact plumbing [pending]
+### `T025` Implement formal claim bridge and artifact plumbing [done]
 
 Why:
 
@@ -552,7 +552,7 @@ Acceptance criteria:
 - a supported run can emit a bounded differential-check artifact
 - formal claim artifacts are written deterministically
 
-### `T026` Add bounded differential checks between Python and Lean reference semantics [pending]
+### `T026` Add bounded differential checks between Python and Lean reference semantics [done]
 
 Why:
 
@@ -921,7 +921,7 @@ Acceptance criteria:
 
 ## Phase 6: Researcher Usability
 
-### `T060` Add starter candidate and world library [pending]
+### `T060` Add starter candidate and world library [done]
 
 Why:
 
@@ -943,7 +943,7 @@ Acceptance criteria:
 - at least four candidate examples and three world examples exist
 - each example is schema-valid and runnable
 
-### `T061` Add suite templates [pending]
+### `T061` Add suite templates [done]
 
 Why:
 
@@ -965,7 +965,7 @@ Acceptance criteria:
 
 - each suite template runs without manual editing
 
-### `T062` Add runbook section for first-time operators [pending]
+### `T062` Add runbook section for first-time operators [done]
 
 Why:
 

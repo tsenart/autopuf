@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import replace
 from pathlib import Path
 from typing import Sequence
 
@@ -17,6 +16,8 @@ from pufopt.experiments.reports import (
     load_frontier_snapshot,
     render_frontier_snapshot,
 )
+from pufopt.formal.bridge import finalize_formal_artifacts, supports_formal_bridge
+from pufopt.formal.proof_status import ensure_result_has_proof_status, proof_status_payload
 from pufopt.loop.search import optimize_suite
 from pufopt.storage.artifacts import create_run_layout, write_artifact, write_run_context
 from pufopt.storage.io import write_yaml_atomic
@@ -139,7 +140,7 @@ def _handle_evaluate(args: argparse.Namespace) -> int:
         frontier_updated=False,
         baseline_utility=None,
     )
-    scorecard = _attach_default_proof_status(scorecard)
+    scorecard = ensure_result_has_proof_status(scorecard)
 
     layout = create_run_layout(
         args.artifacts_root,
@@ -174,9 +175,18 @@ def _handle_evaluate(args: argparse.Namespace) -> int:
         },
     )
     _write_attack_artifacts(layout, evaluation.attacks)
-    write_artifact(layout, "score/score.json", scorecard)
     write_artifact(layout, "score/evaluation.json", evaluation)
-    _write_formal_status_artifact(layout, scorecard)
+    if scorecard.is_survivor or supports_formal_bridge(candidate.family):
+        scorecard = finalize_formal_artifacts(
+            layout.root,
+            run_id=layout.run_id,
+            candidate=candidate,
+            world=world,
+            scorecard=scorecard,
+        )
+    else:
+        _write_formal_status_artifact(layout, scorecard)
+    write_artifact(layout, "score/score.json", scorecard)
     summary_path = layout.root / "summary.md"
     summary_path.write_text(
         _render_summary(
@@ -374,29 +384,13 @@ def _write_attack_artifacts(layout: object, attacks: list[AttackResult]) -> None
         write_artifact(layout, f"attacks/{attack.name}.json", attack)
 
 
-def _attach_default_proof_status(scorecard: ScoreCard) -> ScoreCard:
-    if (
-        scorecard.proof_status is None
-        and (scorecard.strong_result or scorecard.surprising_result)
-    ):
-        return replace(scorecard, proof_status="empirical_only")
-    return scorecard
-
-
 def _write_formal_status_artifact(layout: object, scorecard: ScoreCard) -> None:
     if scorecard.proof_status is None and scorecard.formal_claim_id is None:
         return
     write_artifact(
         layout,
         "formal/proof_status.json",
-        {
-            "candidate_id": scorecard.candidate_id,
-            "world_id": scorecard.world_id,
-            "formal_claim_id": scorecard.formal_claim_id,
-            "proof_status": scorecard.proof_status,
-            "strong_result": scorecard.strong_result,
-            "surprising_result": scorecard.surprising_result,
-        },
+        proof_status_payload(scorecard),
     )
 
 

@@ -60,18 +60,21 @@ cd formal && lake build && cd ..
 What exists today:
 
 - working `evaluate`, `attack`, `optimize`, `frontier`, and `report` commands
+- starter candidate and world libraries
+- runnable suite templates for smoke, attack-analysis, short optimization, and regression validation
 - two baseline candidate families
 - two baseline world families
 - five attack families
 - constrained scoring and frontier maintenance
 - a functioning Lean workspace and proof-status plumbing
+- formal claim bridge artifacts in run outputs
+- bounded Python/Lean differential checks for `classical_crp`
 - externalized heuristic coefficients in `configs/heuristics/attacks.yaml`
 - externalized regression expectations in `tests/fixtures/regression_expectations.yaml`
 
 What is still explicitly unfinished:
 
-- Python-Lean differential checks
-- expanded starter template library
+- broader starter coverage beyond the current baseline and regression libraries
 
 ## Current Status
 
@@ -85,8 +88,9 @@ Implemented now:
 
 Remaining work:
 
-- formal bridge hardening and bounded differential checks
-- expanded starter libraries
+- broader formal-family coverage beyond `classical_crp`
+- deeper formal claims beyond `specified` bridge status
+- richer starter libraries and more varied search spaces
 
 Validation note:
 
