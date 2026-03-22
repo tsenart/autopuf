@@ -29,11 +29,11 @@ Done:
 - `T010` through `T015`
 - `T020` through `T024`
 - `T030` through `T045`
+- `T050` through `T052`
 
 Pending:
 
 - `T025` through `T026`
-- `T050` through `T052`
 - `T060` through `T062`
 
 Important note:
@@ -855,7 +855,7 @@ Acceptance criteria:
 
 ## Phase 5: Validation And Research Utility
 
-### `T050` Create literature-aligned regression fixtures [pending]
+### `T050` Create literature-aligned regression fixtures [done]
 
 Why:
 
@@ -877,7 +877,7 @@ Acceptance criteria:
 - includes at least one CRP-limited construction
 - includes at least one trust-limited remote-auth-like construction
 
-### `T051` Implement regression suites [pending]
+### `T051` Implement regression suites [done]
 
 Why:
 
@@ -898,7 +898,7 @@ Acceptance criteria:
 - suite reproduces at least two literature-aligned failure modes
 - failure conditions are asserted in tests
 
-### `T052` Implement example run reports [pending]
+### `T052` Implement example run reports [done]
 
 Why:
 

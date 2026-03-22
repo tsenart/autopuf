@@ -32,6 +32,8 @@ class AttacksTest(unittest.TestCase):
         self.assertGreaterEqual(float(result.success), 0.0)
         self.assertLess(float(result.success), 1.0)
         self.assertIn("best_model", result.metrics)
+        self.assertEqual(result.metrics["calibration_status"], "heuristic")
+        self.assertIn("provenance_ref", result.metrics)
 
     def test_nearest_match_attack_runs_on_optical_baseline(self) -> None:
         candidate = build_candidate("candidates/baseline-optical-auth-001.yaml")
@@ -43,6 +45,8 @@ class AttacksTest(unittest.TestCase):
         self.assertIsNotNone(result.success)
         self.assertGreaterEqual(float(result.success), 0.0)
         self.assertLess(float(result.success), 1.0)
+        self.assertEqual(result.metrics["calibration_status"], "heuristic")
+        self.assertIn("provenance_ref", result.metrics)
 
     def test_attack_budget_requires_positive_integers(self) -> None:
         with self.assertRaises(ValueError):

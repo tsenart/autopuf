@@ -1,0 +1,8 @@
+id: regression-modeling-vulnerable-crp-001
+family: classical_crp
+params:
+  challenge_space_size: 64
+  response_bit_width: 1
+  replay_window: 1
+  threshold: 0.12
+  helper_data: none

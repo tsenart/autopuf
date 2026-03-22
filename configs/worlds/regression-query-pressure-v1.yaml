@@ -1,0 +1,8 @@
+id: regression-query-pressure-v1
+family: lab_clean
+params:
+  sensor_noise_sigma: 0.004
+  temperature_shift_c: 1
+  illumination_jitter: 0.01
+  attacker_query_budget: 4000
+  verifier_model: honest

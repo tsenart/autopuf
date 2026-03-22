@@ -65,12 +65,13 @@ What exists today:
 - five attack families
 - constrained scoring and frontier maintenance
 - a functioning Lean workspace and proof-status plumbing
+- externalized heuristic coefficients in `configs/heuristics/attacks.yaml`
+- externalized regression expectations in `tests/fixtures/regression_expectations.yaml`
 
 What is still explicitly unfinished:
 
 - Python-Lean differential checks
-- literature-aligned regression fixtures and regression suites
-- starter template library and example generated reports
+- expanded starter template library
 
 ## Current Status
 
@@ -85,8 +86,13 @@ Implemented now:
 Remaining work:
 
 - formal bridge hardening and bounded differential checks
-- literature-aligned regression suites
-- example reports and expanded starter libraries
+- expanded starter libraries
+
+Validation note:
+
+- the attack coefficients and regression thresholds are now externalized and tagged as `heuristic`
+- they are validation scaffolding for instrument correctness
+- they are not claimed as literature-derived numeric constants
 
 ## Mission
 

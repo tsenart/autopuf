@@ -1,0 +1,8 @@
+id: regression-modeling-clean-v1
+family: lab_clean
+params:
+  sensor_noise_sigma: 0.002
+  temperature_shift_c: 0
+  illumination_jitter: 0.005
+  attacker_query_budget: 2000
+  verifier_model: honest

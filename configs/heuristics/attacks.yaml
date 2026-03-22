@@ -1,0 +1,180 @@
+version: heuristic_bootstrap_v1
+calibration_status: heuristic
+citation_status: qualitative_literature_alignment_only
+note: >
+  These coefficients are bootstrap heuristics for software validation.
+  They encode literature-aligned failure shapes, not literature-calibrated constants.
+
+attacks:
+  modeling:
+    budget_query_reference: 1000.0
+    families:
+      classical_crp:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Small CRP spaces should remain learnable under modeling pressure.
+        challenge_space_reference: 128.0
+        response_width_reference: 1.0
+        models:
+          linear_probe:
+            base: 0.12
+            challenge_factor: 0.28
+            budget_factor: 0.18
+            response_factor: 0.05
+            observed_noise: -1.8
+          tree_probe:
+            base: 0.18
+            challenge_factor: 0.36
+            budget_factor: 0.22
+            response_factor: 0.06
+            observed_noise: -1.4
+          kernel_probe:
+            base: 0.16
+            challenge_factor: 0.32
+            budget_factor: 0.25
+            response_factor: 0.08
+            observed_noise: -1.2
+      optical_auth:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Lower-dimensional optical signatures should remain more learnable than richer ones.
+        feature_dimension_reference: 64.0
+        enrollment_reference: 32.0
+        models:
+          linear_probe:
+            base: 0.08
+            feature_factor: 0.20
+            enrollment_factor: 0.16
+            budget_factor: 0.14
+            observed_noise: -1.4
+            illumination: -0.4
+          tree_probe:
+            base: 0.10
+            feature_factor: 0.24
+            enrollment_factor: 0.18
+            budget_factor: 0.18
+            observed_noise: -1.2
+            illumination: -0.35
+          kernel_probe:
+            base: 0.11
+            feature_factor: 0.28
+            enrollment_factor: 0.14
+            budget_factor: 0.20
+            observed_noise: -1.0
+            illumination: -0.3
+
+  replay:
+    observation_reference: 128.0
+    families:
+      classical_crp:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Replay pressure should increase as replay windows shrink.
+        base: 0.18
+        window_inverse_weight: 0.48
+        observation_factor_weight: 0.18
+        noise_weight: -1.2
+      optical_auth:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Leaky verifier or archive assumptions should worsen replay resistance.
+        base: 0.05
+        session_policy_bonus:
+          one_time_use: 0.08
+          bounded_reuse: 0.28
+        verifier_bonus:
+          honest: 0.0
+          semi_honest_archive: 0.08
+          archival_logs: 0.08
+          overprivileged: 0.16
+          leaky_database: 0.16
+          untrusted_archive: 0.16
+          default: 0.05
+        template_leakage_weight: 0.18
+        observation_factor_weight: 0.12
+        noise_weight: -0.8
+        illumination_weight: -0.2
+
+  nearest_match:
+    search_step_reference: 128.0
+    families:
+      classical_crp:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Counterfeiting should get easier as thresholds loosen and spaces shrink.
+        base: 0.10
+        threshold_weight: 0.30
+        challenge_space_reference: 64.0
+        challenge_factor_weight: 0.22
+        search_factor_weight: 0.18
+        noise_weight: -1.0
+      optical_auth:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Trust leakage should amplify nearest-match counterfeit success.
+        base: 0.08
+        feature_dimension_reference: 64.0
+        feature_factor_weight: 0.28
+        search_factor_weight: 0.22
+        verifier_bonus:
+          honest: 0.0
+          semi_honest_archive: 0.06
+          archival_logs: 0.06
+          overprivileged: 0.14
+          leaky_database: 0.14
+          untrusted_archive: 0.14
+          default: 0.04
+        template_leakage_weight: 0.20
+        noise_weight: -0.8
+        illumination_weight: -0.25
+
+  crp_exhaustion:
+    query_reference: 2000.0
+    families:
+      classical_crp:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Limited challenge spaces should show rapid session collapse under sustained queries.
+        base: 0.12
+        query_factor_weight: 0.55
+        lifetime_reference: 128.0
+        lifetime_weight: 0.18
+      optical_auth:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Small enrollment sets should show faster lifetime pressure.
+        base: 0.08
+        query_factor_weight: 0.40
+        lifetime_reference: 64.0
+        lifetime_weight: 0.10
+        queries_per_session: 16
+
+  drift_abuse:
+    search_step_reference: 128.0
+    families:
+      classical_crp:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Even simple CRP systems should degrade under bounded drift when noise rises.
+        base: 0.05
+        search_factor_weight: 0.16
+        noise_weight: 1.8
+      optical_auth:
+        provenance:
+          calibration_status: heuristic
+          citation_status: qualitative_literature_alignment_only
+          note: Optical systems should react to noise, illumination, and pose drift.
+        base: 0.07
+        search_factor_weight: 0.18
+        noise_weight: 1.4
+        illumination_weight: 0.5
+        angle_divisor: 120.0

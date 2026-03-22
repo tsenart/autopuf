@@ -1,0 +1,8 @@
+id: regression-crp-limited-crp-001
+family: classical_crp
+params:
+  challenge_space_size: 32
+  response_bit_width: 1
+  replay_window: 8
+  threshold: 0.08
+  helper_data: none

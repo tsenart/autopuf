@@ -1,0 +1,10 @@
+id: regression-trust-limited-remote-auth-001
+family: optical_auth
+params:
+  feature_extractor: spectral_histogram_v1
+  threshold_policy: global_margin
+  enrollment_samples: 16
+  feature_dimension: 32
+  challenge_sampler: random_uniform
+  session_policy: bounded_reuse
+  sensor_mode: standard_camera

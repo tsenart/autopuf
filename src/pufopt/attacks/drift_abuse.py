@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pufopt.config import attack_family_config, attack_provenance
 from pufopt.attacks.base import AttackBudget, clamp_success, numeric_param, register_attack_family
 from pufopt.types import AttackResult, BuiltCandidate, WorldInstance
 
@@ -13,7 +14,12 @@ def run_drift_abuse_attack(
     budget: AttackBudget,
 ) -> AttackResult:
     """Exploit allowed environmental drift to induce errors."""
-    search_factor = min(1.0, budget.search_steps / 128.0)
+    family_config = attack_family_config("drift_abuse", candidate.family)
+    provenance = attack_provenance("drift_abuse", candidate.family)
+    search_factor = min(
+        1.0,
+        budget.search_steps / float(family_config["search_step_reference"]),
+    )
     noise = numeric_param(
         world.params, "observed_sensor_noise_sigma", numeric_param(world.params, "sensor_noise_sigma", 0.02)
     )
@@ -29,10 +35,18 @@ def run_drift_abuse_attack(
     )
 
     if candidate.family == "classical_crp":
-        success = clamp_success(0.05 + 0.16 * search_factor + 1.8 * noise)
+        success = clamp_success(
+            float(family_config["base"])
+            + float(family_config["search_factor_weight"]) * search_factor
+            + float(family_config["noise_weight"]) * noise
+        )
     elif candidate.family == "optical_auth":
         success = clamp_success(
-            0.07 + 0.18 * search_factor + 1.4 * noise + 0.5 * illumination + angle / 120.0
+            float(family_config["base"])
+            + float(family_config["search_factor_weight"]) * search_factor
+            + float(family_config["noise_weight"]) * noise
+            + float(family_config["illumination_weight"]) * illumination
+            + angle / float(family_config["angle_divisor"])
         )
     else:
         raise ValueError(f"unsupported candidate family for drift abuse attack: {candidate.family}")
@@ -43,8 +57,14 @@ def run_drift_abuse_attack(
         metrics={
             "attack_success": success,
             "induced_false_accept_or_reject": success,
+            "calibration_status": provenance["calibration_status"],
+            "citation_status": provenance["citation_status"],
+            "provenance_ref": provenance["provenance_ref"],
         },
         traces=[f"drift_abuse_success={success:.6f}"],
         params=budget.as_params(),
+        notes=(
+            f"calibration_status={provenance['calibration_status']}; "
+            f"provenance_ref={provenance['provenance_ref']}"
+        ),
     )
-

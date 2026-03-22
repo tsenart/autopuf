@@ -1,0 +1,10 @@
+id: regression-untrusted-remote-auth-v1
+family: phone_reader_indoor
+params:
+  sensor_noise_sigma: 0.025
+  temperature_shift_c: 4
+  illumination_jitter: 0.08
+  angle_variation_deg: 5
+  attacker_query_budget: 4000
+  verifier_model: leaky_database
+  template_leakage: 1.0

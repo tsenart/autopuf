@@ -1,0 +1,22 @@
+id: regression-trust-limited-remote-auth
+mode: research
+artifacts_root: artifacts/runs
+search:
+  algorithm: regression
+  max_iterations: 1
+  seeds:
+    - candidates/regression-trust-limited-remote-auth-001.yaml
+worlds:
+  - configs/worlds/regression-untrusted-remote-auth-v1.yaml
+attacks:
+  - modeling
+  - replay
+  - nearest_match
+  - crp_exhaustion
+  - drift_abuse
+scoring:
+  file: configs/scoring/default.yaml
+budgets:
+  queries: 2000
+  observations: 512
+  search_steps: 128

@@ -1,0 +1,22 @@
+id: regression-crp-limited
+mode: research
+artifacts_root: artifacts/runs
+search:
+  algorithm: regression
+  max_iterations: 1
+  seeds:
+    - candidates/regression-crp-limited-crp-001.yaml
+worlds:
+  - configs/worlds/regression-query-pressure-v1.yaml
+attacks:
+  - modeling
+  - replay
+  - nearest_match
+  - crp_exhaustion
+  - drift_abuse
+scoring:
+  file: configs/scoring/default.yaml
+budgets:
+  queries: 2500
+  observations: 256
+  search_steps: 128

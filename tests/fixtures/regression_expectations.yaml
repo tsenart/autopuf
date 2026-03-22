@@ -1,0 +1,56 @@
+version: validation_scaffold_v1
+calibration_status: heuristic
+citation_status: qualitative_literature_alignment_only
+note: >
+  These regression thresholds are validation scaffolding.
+  They are chosen to keep the instrument honest about known boundary types,
+  not to claim paper-derived numeric calibration.
+
+fixtures:
+  regression-modeling-vulnerable-crp-001:
+    candidate: candidates/regression-modeling-vulnerable-crp-001.yaml
+    world: configs/worlds/regression-modeling-clean-v1.yaml
+    suite: suites/regression-modeling-vulnerable.yaml
+    provenance:
+      calibration_status: heuristic
+      citation_status: qualitative_literature_alignment_only
+      note: Modeling-vulnerable CRP boundary used for instrument validation.
+    expectations:
+      modeling_attack_success:
+        op: ">="
+        value: 0.80
+      replay_attack_success:
+        op: ">="
+        value: 0.80
+
+  regression-crp-limited-crp-001:
+    candidate: candidates/regression-crp-limited-crp-001.yaml
+    world: configs/worlds/regression-query-pressure-v1.yaml
+    suite: suites/regression-crp-limited.yaml
+    provenance:
+      calibration_status: heuristic
+      citation_status: qualitative_literature_alignment_only
+      note: CRP-limited boundary used for session-lifetime pressure validation.
+    expectations:
+      crp_exhaustion_attack_success:
+        op: ">="
+        value: 0.80
+      reduced_crp_lifetime:
+        op: "<="
+        value: 1
+
+  regression-trust-limited-remote-auth-001:
+    candidate: candidates/regression-trust-limited-remote-auth-001.yaml
+    world: configs/worlds/regression-untrusted-remote-auth-v1.yaml
+    suite: suites/regression-trust-limited-remote-auth.yaml
+    provenance:
+      calibration_status: heuristic
+      citation_status: qualitative_literature_alignment_only
+      note: Leaky-verifier remote-auth boundary used for replay/counterfeit validation.
+    expectations:
+      replay_attack_success:
+        op: ">="
+        value: 0.70
+      counterfeit_attack_success:
+        op: ">="
+        value: 0.80

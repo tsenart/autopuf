@@ -1,0 +1,22 @@
+id: regression-modeling-vulnerable
+mode: research
+artifacts_root: artifacts/runs
+search:
+  algorithm: regression
+  max_iterations: 1
+  seeds:
+    - candidates/regression-modeling-vulnerable-crp-001.yaml
+worlds:
+  - configs/worlds/regression-modeling-clean-v1.yaml
+attacks:
+  - modeling
+  - replay
+  - nearest_match
+  - crp_exhaustion
+  - drift_abuse
+scoring:
+  file: configs/scoring/default.yaml
+budgets:
+  queries: 2000
+  observations: 512
+  search_steps: 128
