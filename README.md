@@ -59,21 +59,38 @@ cd formal && lake build && cd ..
 
 ## For Jose Next
 
-After the first successful run, the highest-value path is:
+After the first successful run, José should mostly work through the autonomous loops, not by manually repeating ad hoc commands.
 
-1. Encode the real search space.
-Create José's actual candidate hypotheses in `candidates/`, world assumptions in `configs/worlds/`, and experiment suites in `suites/`.
+1. Encode the real search space once.
+Add José's actual candidate hypotheses in `candidates/`, world assumptions in `configs/worlds/`, and experiment suites in `suites/`.
 
-2. Run the real hypotheses through the current engine.
-Start from the suite templates, then run `evaluate`, `attack`, and `optimize` on José-specific inputs until the frontier reflects his real research questions.
+2. Use the autonomous research loop as the default.
+Run `optimize` on José-specific suites, inspect `frontier` and `report`, and use `formalize-claim` on important runs.
 
-3. Calibrate the heuristics.
+```bash
+.venv/bin/python -m pufopt.cli optimize --suite suites/<jose-suite>.yaml
+.venv/bin/python -m pufopt.cli frontier --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.cli report --run artifacts/runs/<run_id>
+.venv/bin/python -m pufopt.ops formalize-claim --run artifacts/runs/<run_id>
+```
+
+3. Use the autonomous delivery loop when extending the repo.
+If José or collaborators add new families, worlds, or formal coverage, drive that work through `pufopt.ops`.
+
+```bash
+.venv/bin/python -m pufopt.ops next-task
+.venv/bin/python -m pufopt.ops pack-context --task <task_id>
+.venv/bin/python -m pufopt.ops verify-task --task <task_id>
+.venv/bin/python -m pufopt.ops promote-task --task <task_id>
+```
+
+4. Calibrate the heuristics.
 Treat values in `configs/heuristics/attacks.yaml` as explicit scaffolding until they are tied to papers, datasets, or lab measurements.
 
-4. Extend the formal spine where it matters most.
+5. Extend the formal spine where it matters most.
 Add bounded differential checks and stronger claims for the family José is most likely to publish first.
 
-5. Put the loop on a cadence.
+6. Put the loop on a cadence.
 Use regression suites for safety, weekly optimization runs for discovery, and `frontier` plus `report` for review.
 
 What exists today:
