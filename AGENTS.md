@@ -60,6 +60,37 @@ The system runs this loop:
 - Attack success always overrides optimistic narrative summaries.
 - Strong results must carry `proof_status` and `formal_claim_id`, or be explicitly marked `empirical_only`.
 
+## Repo Driving Pattern
+
+When a terminal coding agent is asked to work in this repo, it should not improvise its own workflow.
+
+It should read these files first:
+
+- [AGENTS.md](/Users/tomas/code/pufs/AGENTS.md)
+- [README.md](/Users/tomas/code/pufs/README.md)
+- [TASKS.md](/Users/tomas/code/pufs/TASKS.md)
+- [WORKFLOWS.md](/Users/tomas/code/pufs/WORKFLOWS.md)
+- [RUNBOOK.md](/Users/tomas/code/pufs/RUNBOOK.md)
+
+Then it should choose one of two modes:
+
+- `Research mode`: drive candidate, world, and suite evaluation through `pufopt.cli`
+- `Build mode`: drive repo-extension work through `pufopt.ops`
+
+Use these commands as the default control surface:
+
+- research: `pufopt.cli evaluate`, `attack`, `optimize`, `frontier`, `report`
+- formalization of important runs: `pufopt.ops formalize-claim`
+- delivery control plane: `pufopt.ops next-task`, `pack-context`, `verify-task`, `promote-task`
+
+Required behavior for the terminal agent:
+
+1. Read the contracts before editing.
+2. Prefer the shipped CLI commands over ad hoc scripts.
+3. Keep `README.md`, `TASKS.md`, and `RUNBOOK.md` aligned with shipped behavior.
+4. Verify and formalize before commit and push.
+5. Treat `AGENTS.md` as the repo-specific operating contract, not as optional background reading.
+
 ## Shared Schemas
 
 Every agent reads and writes the same canonical objects.

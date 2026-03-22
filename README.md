@@ -93,6 +93,53 @@ Add bounded differential checks and stronger claims for the family José is most
 6. Put the loop on a cadence.
 Use regression suites for safety, weekly optimization runs for discovery, and `frontier` plus `report` for review.
 
+## Driving Through A Terminal Coding Agent
+
+José should treat this repo as agent-drivable by default.
+
+The key contract is [AGENTS.md](/Users/tomas/code/pufs/AGENTS.md):
+
+- it tells the coding agent what roles exist
+- it defines what `v1` is responsible for
+- it sets the quality bar, promotion rules, and autonomy boundaries
+
+The supporting contracts are:
+
+- [README.md](/Users/tomas/code/pufs/README.md) for architecture and scope
+- [TASKS.md](/Users/tomas/code/pufs/TASKS.md) for backlog and dependency order
+- [WORKFLOWS.md](/Users/tomas/code/pufs/WORKFLOWS.md) for execution state machines
+- [RUNBOOK.md](/Users/tomas/code/pufs/RUNBOOK.md) for the exact command-level operating procedure
+
+The practical pattern is:
+
+1. Tell the terminal coding agent to read `AGENTS.md`, `README.md`, `TASKS.md`, `WORKFLOWS.md`, and `RUNBOOK.md` before acting.
+2. Ask it to use `pufopt.cli` for research runs and `pufopt.ops` for repo-extension work.
+3. Ask it to verify, formalize, and only then commit and push.
+
+Useful prompt shape:
+
+```text
+Read AGENTS.md, README.md, TASKS.md, WORKFLOWS.md, and RUNBOOK.md.
+Follow the repo's autonomous workflow.
+
+For research work:
+- use pufopt.cli evaluate / attack / optimize / frontier / report
+- formalize important runs with pufopt.ops formalize-claim
+
+For repo work:
+- use pufopt.ops next-task / pack-context / verify-task / promote-task
+- keep TASKS.md and README.md aligned with shipped behavior
+
+Do the work, run verification, summarize what changed, then commit and push.
+```
+
+For José's normal use, there are really two agent modes:
+
+- `Research mode`: "take this suite or candidate family, run the loop, show me the frontier, tell me what survived, and formalize the strongest run."
+- `Build mode`: "extend the repo to support this new family, world, attack, or formal target, and drive the task through the delivery workflow."
+
+That is the intended operating model: José sets objectives and reviews findings, while the terminal coding agent executes the routine loop under the contracts in `AGENTS.md`.
+
 What exists today:
 
 - working `evaluate`, `attack`, `optimize`, `frontier`, and `report` commands
