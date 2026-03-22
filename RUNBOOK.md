@@ -370,7 +370,13 @@ The repository should eventually expose these commands:
 .venv/bin/python -m pufopt.ops formalize-claim --run artifacts/runs/<run_id>
 ```
 
-The `pufopt.ops` commands are not implemented yet, but this is the intended autonomous control plane.
+These `pufopt.ops` commands are implemented.
+
+- `next-task` selects the next unblocked task manifest
+- `pack-context` writes `context.md` and advances the task into `context_packed`
+- `verify-task` runs required commands and writes `verification.json`, `formal_check.json`, `red_review.md`, and `reproduction_report.md`
+- `promote-task` evaluates promotion gates and writes `promotion.yaml`
+- `formalize-claim` refreshes run-level formal artifacts for an evaluation or optimization run
 
 ## World-Class Standards
 

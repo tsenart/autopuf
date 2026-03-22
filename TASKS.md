@@ -13,6 +13,7 @@ The goal is not to list everything that could be done. The goal is to define the
 - produces replayable artifacts
 - reproduces at least two literature-aligned failure modes
 - carries proof status for promoted strong claims
+- exposes a thin executable control plane for task selection, verification, promotion, and run formalization
 
 ## Execution Rules
 
@@ -38,7 +39,7 @@ Pending:
 
 Important note:
 
-- the current `v1` backlog is now implemented end to end; follow-up work should extend breadth, rigor, or domain coverage rather than re-open completed baseline tasks.
+- the current `v1` backlog is now implemented end to end, including the thin delivery control plane; follow-up work should extend breadth, rigor, or domain coverage rather than re-open completed baseline tasks.
 
 ## Critical Path
 

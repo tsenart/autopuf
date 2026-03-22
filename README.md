@@ -60,6 +60,7 @@ cd formal && lake build && cd ..
 What exists today:
 
 - working `evaluate`, `attack`, `optimize`, `frontier`, and `report` commands
+- working `pufopt.ops` commands for `next-task`, `pack-context`, `verify-task`, `promote-task`, and `formalize-claim`
 - starter candidate and world libraries
 - runnable suite templates for smoke, attack-analysis, short optimization, and regression validation
 - two baseline candidate families
@@ -85,6 +86,7 @@ Implemented now:
 - honest evaluation, constraints, scoring, and proof-status tagging
 - modeling, replay, nearest-match, CRP exhaustion, and drift-abuse attacks
 - adversarial evaluation, frontier maintenance, mutation, scheduling, and optimization
+- a working delivery control plane for task selection, context packing, verification, promotion, and run formalization
 
 Remaining work:
 

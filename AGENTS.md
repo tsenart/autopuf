@@ -500,5 +500,6 @@ Agents control:
 5. The planner emits a concrete next action.
 6. At least two known literature-aligned failure modes are reproduced.
 7. Strong promoted results carry proof status and link to a formal claim or are explicitly marked `empirical_only`.
+8. The delivery workflow has executable commands for next-task selection, context packing, verification, promotion, and run-level formalization.
 
 When these conditions hold, the project has crossed from "interesting framework" into "real autonomous evaluator."
