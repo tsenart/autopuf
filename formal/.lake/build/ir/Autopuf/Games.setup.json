@@ -1,9 +1,0 @@
-{"plugins": [],
- "package": "autopuf",
- "options": {},
- "name": "Autopuf.Games",
- "isModule": false,
- "importArts":
- {"Autopuf.Model":
-  ["/Users/tomas/code/pufs/formal/.lake/build/lib/lean/Autopuf/Model.olean"]},
- "dynlibs": []}
